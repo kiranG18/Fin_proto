@@ -1,0 +1,1979 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FinLit Checkpoint prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#e9eaec;--card:#fff;--tile:#f4f4f5;--ink:#141416;--ink2:#5d6068;--ink3:#8b8e96;--line:#e6e7ea;
+  --accent:#f15a24;--accent2:#ff8a4d;--accentSoft:#fdece4;--dark:#151517;--onDark:#fff;
+  --good:#1e9e5a;--goodBg:#e5f6ec;--bad:#e5484d;--badBg:#fde9e8;--warn:#d99a06;--warnBg:#fdf3d7;
+  --shadow:0 1px 2px rgba(20,20,22,.04);
+  --r:26px;--rs:16px;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --page:#0d0d0f;--card:#18181b;--tile:#232327;--ink:#f3f3f5;--ink2:#a5a8b0;--ink3:#767981;--line:#2b2b30;
+  --accentSoft:#3a2219;--dark:#f3f3f5;--onDark:#141416;
+  --goodBg:#12301f;--badBg:#3a1a1c;--warnBg:#3a2f0e;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.shell{display:grid;grid-template-columns:76px 1fr;gap:18px;padding:16px 18px 24px;max-width:1560px;margin:0 auto}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:14px;position:relative}
+.pill{background:var(--card);border-radius:999px;padding:8px;display:flex;align-items:center;gap:4px;box-shadow:var(--shadow)}
+.logo{display:flex;align-items:center;gap:10px;padding:8px 22px 8px 10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
+.logo .mark{width:36px;height:36px;border-radius:50%;background:linear-gradient(140deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff}
+.navpill{margin:0 auto;padding:8px 10px}
+.navpill button{padding:11px 20px;border-radius:999px;color:var(--ink2);font-weight:500}
+.navpill button:hover{color:var(--ink)}
+.navpill button.on{background:var(--dark);color:var(--onDark)}
+.actpill{gap:2px;padding:6px 10px}
+.ibtn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;position:relative}
+.ibtn:hover{background:var(--tile)}
+.ibtn .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--card)}
+.userchip{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:999px;padding:8px 14px 8px 8px;min-width:230px;box-shadow:var(--shadow)}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(140deg,#2b2b30,#55555c);color:#fff;display:grid;place-items:center;font-weight:600}
+.userchip .n{font-weight:600;line-height:1.2}.userchip .e{font-size:12px;color:var(--ink3);line-height:1.2}
+.userchip>div{flex:1;text-align:left}
+.rail{display:flex;flex-direction:column;gap:14px;align-items:center;position:sticky;top:14px;align-self:start;height:calc(100vh - 110px);min-height:520px}
+.rail .grp{background:var(--card);border-radius:999px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.rail .ibtn{width:44px;height:44px}
+.rail .ibtn.on{background:var(--dark);color:var(--onDark)}
+.rail .sp{flex:1}
+.main{min-width:0}
+h1.greet{font-size:38px;line-height:1.1;letter-spacing:-.03em;font-weight:600;margin:14px 0 6px}
+.sub{color:var(--ink2);margin:0 0 20px}
+.grid>*{min-width:0}
+.grid{display:grid;gap:18px;grid-template-columns:minmax(0,1.05fr) minmax(0,1.05fr) minmax(0,1.1fr);grid-template-areas:"bal tiles chart"}
+.card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);min-width:0}
+.card h3{margin:0;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.card .hint{color:var(--ink2);font-size:13px;margin-top:2px}
+.card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.bal .lbl{color:var(--ink2);font-size:14px}
+.big{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1.15;margin:6px 0 8px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:12px;font-weight:500}
+.badge.g{background:var(--goodBg);color:var(--good)}.badge.r{background:var(--badBg);color:var(--bad)}.badge.w{background:var(--warnBg);color:var(--warn)}.badge.n{background:var(--tile);color:var(--ink2)}
+.sel{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-size:13px;font-weight:500;background:var(--card)}
+.sel select{border:0;background:none;outline:0;font-weight:500;cursor:pointer;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:999px;font-weight:600;white-space:nowrap;transition:transform .08s}
+.btn:active{transform:scale(.98)}
+.btn.dark{background:var(--dark);color:var(--onDark)}
+.btn.soft{background:var(--tile);color:var(--ink)}
+.btn.acc{background:linear-gradient(140deg,var(--accent),var(--accent2));color:#fff}
+.btn.line{border:1.5px solid var(--line);background:var(--card)}
+.btn.sm{padding:9px 16px;font-size:13px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.walletbox{background:var(--tile);border-radius:20px;padding:12px}
+.walletbox .t{font-size:13px;color:var(--ink2);margin:0 0 10px 4px}.walletbox .t b{color:var(--ink);font-weight:600}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini button{text-align:left;background:var(--card);border-radius:14px;padding:10px;display:block;border:1px solid transparent}
+.mini button:hover{border-color:var(--line)}
+.mini .f{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.mini .f i{width:16px;height:16px;border-radius:50%;background:var(--accent);display:inline-block;flex:none}
+.mini .f i.m{background:var(--dark)}.mini .f i.ix{background:var(--ink3)}
+.mini .a{font-size:16px;font-weight:600;margin:6px 0 2px;letter-spacing:-.02em}
+.mini .s{font-size:11px;color:var(--ink3)}
+.mini .st{font-size:11px;margin-top:4px;font-weight:500}
+.st.ok{color:var(--good)}.st.pa{color:var(--warn)}.st.no{color:var(--bad)}
+.tiles{grid-area:tiles;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;background:var(--card);border-radius:var(--r);padding:14px}
+.tile{background:var(--tile);border-radius:22px;padding:16px;text-align:left;display:block;min-height:132px;position:relative;transition:transform .12s}
+.tile:hover{transform:translateY(-1px)}
+.tile .ic{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--ink2)}
+.tile .l{color:var(--ink2);font-size:14px;max-width:70%}
+.tile{min-width:0}
+.tile .v{font-size:clamp(20px,2vw,30px);font-weight:600;letter-spacing:-.03em;margin:14px 0 8px}
+.tile.hot{background:linear-gradient(150deg,#f15a24,#ff9a5c);color:#fff}
+.tile.hot .l{color:rgba(255,255,255,.85)}.tile.hot .ic{background:rgba(255,255,255,.22);color:#fff}
+.tile.hot .badge{background:rgba(255,255,255,.22);color:#fff}
+.chartcard{grid-area:chart}
+.chartbox{background:var(--tile);border-radius:20px;padding:14px;margin-top:14px}
+.chartbox .top{display:flex;justify-content:space-between;font-weight:600;font-size:13px;margin-bottom:6px}
+.legend{display:flex;gap:12px;font-weight:500;font-size:12px;color:var(--ink2)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:baseline}
+.hatch{background:repeating-linear-gradient(135deg,#f15a24 0 3px,#ff8a4d 3px 6px)}
+svg text{font-family:inherit;fill:var(--ink3);font-size:11px}
+.bal{grid-area:bal}.lim{grid-area:lim}.cards{grid-area:cards}.act{grid-area:act}
+.bar{height:16px;border-radius:999px;background:repeating-linear-gradient(135deg,var(--line) 0 3px,transparent 3px 6px);overflow:hidden;margin:16px 0 8px}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .4s}
+.barfoot{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2)}.barfoot b{color:var(--ink)}
+.gcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow:hidden}
+.gcard{border-radius:20px;padding:14px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;position:relative;background:linear-gradient(150deg,#26262a,#0f0f11)}
+.gcard.o{background:linear-gradient(150deg,#f15a24,#ff9a5c)}
+.gcard .p{align-self:flex-start;background:rgba(255,255,255,.2);border-radius:999px;padding:2px 10px;font-size:11px;font-weight:500}
+.gcard .nm{font-weight:600;font-size:15px}
+.gcard .mt{display:flex;justify-content:space-between;font-size:11px;opacity:.85}
+.gcard .mt b{display:block;font-size:13px;font-weight:600;opacity:1;margin-top:2px}
+.act .tools{display:flex;gap:10px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:0 14px;height:44px;min-width:220px;background:var(--card)}
+.search input{border:0;outline:0;background:none;flex:1;min-width:0}
+.fbtn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:0 16px;height:44px;font-weight:500;background:var(--card)}
+.tablewrap{border:1px solid var(--line);border-radius:18px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th{background:var(--tile);color:var(--ink2);font-weight:500;text-align:left;padding:13px 14px;font-size:13px;white-space:nowrap}
+td{padding:14px;border-top:1px solid var(--line);white-space:nowrap}
+tr.sel td{background:var(--tile)}
+.chk{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--ink3);display:inline-grid;place-items:center;vertical-align:middle;background:var(--card)}
+.chk.on{background:var(--dark);border-color:var(--dark);color:var(--onDark)}
+.chk svg{width:12px;height:12px;stroke-width:3}
+.actname{display:flex;align-items:center;gap:10px;font-weight:500}
+.actname .ai{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--accentSoft);color:var(--accent);flex:none}
+.dot2{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.empty{padding:30px;text-align:center;color:var(--ink2)}
+.pop{position:absolute;z-index:60;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 50px rgba(0,0,0,.18);padding:8px;min-width:230px}
+.pop .it{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px}
+.pop .it:hover{background:var(--tile)}
+.pop .ttl{padding:8px 12px;font-weight:600;font-size:13px;color:var(--ink2)}
+.pop .note{padding:10px 12px;border-radius:12px;text-align:left;width:100%;display:block}
+.pop .note:hover{background:var(--tile)}.pop .note b{display:block;font-weight:600}.pop .note span{color:var(--ink2);font-size:13px}
+.overlay{position:fixed;inset:0;background:rgba(10,10,12,.5);z-index:80;display:grid;place-items:center;padding:16px;overflow:auto}
+.modal{background:var(--card);border-radius:28px;width:min(560px,100%);padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.35);max-height:calc(100vh - 32px);overflow:auto;position:relative}
+.modal.wide{width:min(900px,100%)}
+.modal h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em;font-weight:600}
+.modal .lead{color:var(--ink2);margin:0 0 18px}
+.x{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:var(--tile);display:grid;place-items:center;z-index:2}
+.field{display:block;margin:0 0 14px}.field>span{display:block;font-weight:500;margin-bottom:6px;color:var(--ink2);font-size:13px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);outline:0}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px;border:1.5px solid var(--line);border-radius:18px;width:100%;background:var(--card)}
+.opt:hover{border-color:var(--ink3)}
+.opt.on{border-color:var(--accent);background:var(--accentSoft)}
+.opt .oi{width:38px;height:38px;border-radius:12px;background:var(--tile);display:grid;place-items:center;flex:none}
+.opt.on .oi{background:var(--accent);color:#fff}
+.opt b{display:block;font-weight:600}.opt span.d{color:var(--ink2);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);font-weight:500;background:var(--card)}
+.chip:hover{border-color:var(--ink3)}.chip.on{background:var(--dark);color:var(--onDark);border-color:var(--dark)}
+.tabs{display:inline-flex;background:var(--tile);border-radius:999px;padding:4px;gap:2px}
+.tabs button{padding:8px 16px;border-radius:999px;font-weight:500;color:var(--ink2)}
+.tabs button.on{background:var(--dark);color:var(--onDark)}
+.switch{width:46px;height:28px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+.switch.on{background:var(--accent)}.switch.on::after{transform:translateX(18px)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row b{font-weight:600}.row .d{color:var(--ink2);font-size:13px}
+.pagehd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.stat{background:var(--tile);border-radius:20px;padding:16px}.stat .l{color:var(--ink2);font-size:13px}.stat .v{font-size:24px;font-weight:600;letter-spacing:-.02em;margin-top:6px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--tile);font-size:12px;font-weight:500;color:var(--ink2)}
+.tag.o{background:var(--accentSoft);color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--dark);color:var(--onDark);padding:12px 20px;border-radius:999px;z-index:200;font-weight:500;box-shadow:0 12px 30px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+/* checkpoint */
+.cp{width:min(760px,100%);background:var(--card);border-radius:30px;position:relative;box-shadow:0 30px 90px rgba(0,0,0,.4);display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
+.cp .cphd{display:flex;align-items:center;gap:12px;padding:20px 26px 0}
+.cp .brand{display:flex;align-items:center;gap:8px;font-weight:600}
+.cp .brand .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(140deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff}
+.steps{display:flex;gap:6px;margin-left:auto;margin-right:44px}
+.steps i{width:34px;height:6px;border-radius:999px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.cp .body{padding:20px 26px;overflow:auto;flex:1}
+.cp h2{font-size:26px;letter-spacing:-.025em;margin:0 0 6px;font-weight:600;line-height:1.2}
+.cp .lead{color:var(--ink2);margin:0 0 18px;font-size:15px}
+.cp .foot{padding:14px 26px 22px;border-top:1px solid var(--line)}
+.cp .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.cp .disc{color:var(--ink3);font-size:11.5px;margin-top:12px;line-height:1.4}
+.linkbtn{color:var(--ink2);font-weight:500;text-decoration:underline;text-underline-offset:3px;padding:8px 4px}
+.linkbtn:hover{color:var(--ink)}
+.headline{font-size:20px;font-weight:600;letter-spacing:-.02em;line-height:1.3;margin:0 0 6px}
+.reach{color:var(--ink2);margin:0 0 14px}
+.legend2{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:8px 0 2px}
+.legend2 i{display:inline-block;width:14px;height:8px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.slidewrap{background:var(--tile);border-radius:18px;padding:14px 16px;margin:12px 0}
+.slidewrap .top{display:flex;justify-content:space-between;font-weight:500;margin-bottom:8px}
+input[type=range]{width:100%;accent-color:var(--accent);height:24px}
+.futures{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.futures .fu{border-radius:18px;padding:14px;background:var(--tile)}
+.futures .fu.after{background:var(--accentSoft)}
+.futures .fu .t{font-size:12.5px;color:var(--ink2);font-weight:500}
+.futures .fu .v{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:4px 0}
+.futures .fu .r{font-size:12.5px;color:var(--ink2)}
+.callout{background:var(--tile);border-radius:16px;padding:14px 16px;margin:12px 0;color:var(--ink2)}
+.callout.ok{background:var(--goodBg);color:var(--good)}
+.callout.warn{background:var(--warnBg);color:var(--warn)}
+.epis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}
+.epis .e{background:var(--tile);border-radius:16px;padding:12px}.epis .e b{display:block;font-size:18px;letter-spacing:-.02em}.epis .e span{font-size:12px;color:var(--ink2);display:block}
+.optcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.oc{border:1.5px solid var(--line);border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:8px;background:var(--card)}
+.oc:hover{border-color:var(--ink3)}
+.oc.on{border-color:var(--accent);background:var(--accentSoft)}
+.oc b{font-weight:600}.oc .e{color:var(--ink2);font-size:13px;flex:1}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.three .btn{width:100%;padding:16px 10px;white-space:normal;text-align:center;line-height:1.25;min-height:60px}
+.three.two{grid-template-columns:1fr 1fr}
+.drawer{position:absolute;inset:0;background:var(--card);border-radius:30px;z-index:5;display:flex;flex-direction:column}
+.drawer .dbody{padding:26px;overflow:auto;flex:1}
+.drawer h2{font-size:22px;margin:0 0 4px}
+.drawer ol{margin:0;padding:0;list-style:none;counter-reset:s}
+.drawer li{padding:14px 0;border-top:1px solid var(--line)}
+.drawer li h4{margin:0 0 4px;font-size:14px}
+.drawer li p,.drawer li ul{margin:0;color:var(--ink2);font-size:13.5px}
+.drawer li ul{padding-left:18px}
+.range3{position:relative;height:26px;margin:6px 0 2px}
+.range3 .tr{position:absolute;top:11px;height:6px;border-radius:999px;background:var(--line);left:0;right:0}
+.range3 .rg{position:absolute;top:8px;height:12px;border-radius:999px}
+.range3 .md{position:absolute;top:4px;width:3px;height:20px;background:var(--ink);border-radius:2px}
+.demo{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:90}
+.demo .fab{background:var(--dark);color:var(--onDark);border-radius:999px;padding:12px 18px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.demo .panel{position:absolute;right:0;bottom:56px;width:min(360px,calc(100vw - 32px));max-height:calc(100vh - 110px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.demo h4{margin:14px 0 8px;font-size:12.5px;color:var(--ink2);font-weight:600}
+.demo h4:first-child{margin-top:0}
+.demo .seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--tile);border-radius:14px;padding:3px;gap:2px}
+.demo .seg button{padding:8px 4px;border-radius:11px;font-size:13px;font-weight:500;color:var(--ink2)}
+.demo .seg button.on{background:var(--dark);color:var(--onDark)}
+.demo .tg{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:13px}
+.bars{display:grid;gap:10px}
+.hb{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;font-size:13px}
+.hb .b{height:14px;border-radius:999px;background:var(--tile);overflow:hidden}.hb .b>div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.hb .b.dk>div{background:var(--dark)}
+.mobnav{display:none}
+@media (max-width:1180px){
+  .grid{grid-template-columns:1fr 1fr;grid-template-areas:"bal tiles" "chart chart"}
+  .userchip{min-width:0}.userchip .e{display:none}
+  .navpill button{padding:11px 14px}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr;padding:12px 12px 90px}
+  .rail{display:none}
+  .topbar{flex-wrap:wrap}
+  .navpill{display:none}
+  .topbar .userchip{margin-left:auto}
+  .logo{padding-right:14px}
+  h1.greet{font-size:30px}
+  .grid{grid-template-columns:1fr;grid-template-areas:"bal" "tiles" "chart"}
+  .mobnav{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:999px;padding:8px;z-index:70;box-shadow:0 10px 30px rgba(0,0,0,.2);justify-content:space-around}
+  .mobnav button{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--ink2)}
+  .mobnav button.on{background:var(--dark);color:var(--onDark)}
+  .demo{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .cols2,.cols3{grid-template-columns:1fr}
+  .mini{grid-template-columns:1fr 1fr 1fr}
+  .three{grid-template-columns:1fr}
+  .optcards,.futures{grid-template-columns:1fr}
+  .cp{border-radius:26px}
+  .hb{grid-template-columns:110px 1fr 50px}
+  .userchip>div{display:none}.userchip{padding:6px}
+  .act .hd{flex-direction:column;align-items:stretch}
+  .act .tools .search{flex:1;min-width:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:600px){
+  body.lock .demo{display:none}
+  .cp .cphd{padding:14px 16px 0}.cp .body{padding:12px 16px}.cp .foot{padding:10px 16px 14px}
+  .cp h2{font-size:22px}.cp .headline{font-size:17px;line-height:1.3}.cp .lead{font-size:14px;margin-bottom:12px}
+  .cp .disc{margin-top:8px;font-size:11px}
+  .cp .actions>div{width:100%}.cp .actions .btn{flex:1}
+  .modal{padding:20px 18px}
+}
+
+.fmtbtn{width:auto;padding:0 12px;font-weight:600;font-size:13px;border-radius:999px}
+.sugrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.sug{background:var(--tile);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.sug .sh{display:flex;align-items:center;gap:10px;font-weight:600}
+.sug .si{width:32px;height:32px;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--accent);flex:none}
+.sug p{margin:0;color:var(--ink2);font-size:13.5px}
+.sug .btn{align-self:flex-start;margin-top:auto}
+@media(max-width:860px){#mkt .cols2{grid-template-columns:1fr!important}#mkt .hb{grid-template-columns:100px 1fr 120px!important}}
+
+.rail .grp.lbl{border-radius:28px;padding:8px 4px;gap:2px;width:68px}
+.rbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 2px 8px;border-radius:20px;width:100%;color:var(--ink2);font-weight:500}
+.rbtn small{font-size:10.5px;line-height:1.1;text-align:center;font-weight:500}
+.rbtn:hover{background:var(--tile)}
+.rbtn.on{background:var(--dark);color:var(--onDark)}
+.chk2{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:start;background:var(--card);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+.chk2 .ci{width:44px;height:44px;border-radius:50%;background:var(--tile);display:grid;place-items:center;color:var(--accent)}
+.chk2 h3{margin:0 0 2px;font-size:16px}
+.chk2 .hl{font-weight:600;font-size:15px;margin:6px 0 2px}
+.chk2 p{margin:0;color:var(--ink2);font-size:13.5px}
+.chk2 .why{font-size:12.5px;color:var(--ink3);margin-top:6px}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.pipe .st{background:var(--tile);border-radius:20px;padding:16px}
+.pipe .n{width:28px;height:28px;border-radius:50%;background:linear-gradient(140deg,var(--accent),var(--accent2));color:#fff;display:grid;place-items:center;font-weight:600;font-size:13px;margin-bottom:8px}
+.pipe b{display:block;margin-bottom:4px}
+.pipe p{margin:0;color:var(--ink2);font-size:13px}
+@media(max-width:860px){.chk2{grid-template-columns:44px 1fr}.chk2 .go{grid-column:1/-1}}
+
+.seg2{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--tile);border-radius:14px;padding:3px;gap:2px}
+.seg2 button{padding:9px 6px;border-radius:11px;font-size:13px;font-weight:500;color:var(--ink2)}
+.seg2 button.on{background:var(--dark);color:var(--onDark)}
+
+.ovrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:18px;margin-top:18px;align-items:stretch}
+.ovrow .hd{margin-bottom:6px}
+.grow+.grow{margin-top:20px;padding-top:6px;border-top:1px solid var(--line)}
+.grow .gtop{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:8px}
+.sugrow.v{grid-template-columns:1fr;margin-top:10px}
+.sugrow.v .sug{display:grid;grid-template-columns:1fr auto;column-gap:16px;row-gap:4px;align-items:center}
+.sugrow.v .sug .sh{grid-column:1}.sugrow.v .sug p{grid-column:1}
+.sugrow.v .sug .btn{grid-column:2;grid-row:1/span 2;margin:0;align-self:center}
+@media(max-width:860px){.ovrow{grid-template-columns:1fr}.sugrow.v .sug{grid-template-columns:1fr}.sugrow.v .sug .btn{grid-column:1;grid-row:auto;margin-top:6px}}
+
+.pagehd{margin-bottom:20px;align-items:flex-end;row-gap:12px}
+.pagehd .sub{margin-bottom:0}
+.pagehd h1.greet{margin-bottom:6px}
+.pagehd>div:last-child{align-items:center}
+
+@media(max-width:1100px){[data-row=sip]{grid-template-columns:1fr 1fr!important}[data-row=sip]>div:first-child,[data-row=sip]>div:last-child{grid-column:1/-1}[data-row=sip]>div:last-child .btn{flex:1}}
+
+@keyframes flowR{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes flowL{from{opacity:0;transform:translateX(-56px)}to{opacity:1;transform:none}}
+.flowR{animation:flowR .42s cubic-bezier(.22,.9,.3,1) both}
+.flowL{animation:flowL .42s cubic-bezier(.22,.9,.3,1) both}
+.shell{overflow-x:clip}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="layer"></div>
+<div id="toast"></div>
+<script>
+/* ===== DATA + ENGINE ===== */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){let u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+/* Prototype series. Calendar-year Nifty 50 returns anchor each year, the monthly path inside a year is seeded.
+   Replace NAV_OVERRIDE with real AMFI monthly NAV arrays ({index:[...],flexi:[...],mid:[...]}, first value = start of Jan 2004). */
+const ANNUAL={2004:10.7,2005:36,2006:39.8,2007:54.8,2008:-51.8,2009:75.8,2010:17.9,2011:-24.6,2012:27.7,2013:6.8,2014:31.4,2015:-4.1,2016:3.0,2017:28.6,2018:3.2,2019:12.0,2020:14.9,2021:24.1,2022:4.3,2023:20.0,2024:8.8,2025:10.5};
+const SHAPE={
+ 2008:[-16,2,-8,8,-3,-13,7,1,-12,-26,-7,7],
+ 2020:[-1.7,-6.4,-23.2,14.7,-2.8,7.5,7.5,2.9,-1.2,3.5,11.4,7.8]
+};
+const Y2026=[-0.5,1.2,-2.6,2.4,1.1,-1.0,0.8,1.5,-0.6];
+const NAV_START={y:2004,m:0};
+function buildSeries(){
+  const r=mulberry32(20261005), rIdx=[];
+  for(let y=2004;y<=2025;y++){
+    const target=Math.log(1+ANNUAL[y]/100);
+    let ms=SHAPE[y]?SHAPE[y].map(v=>Math.log(1+v/100)):Array.from({length:12},()=>gauss(r)*0.038);
+    const adj=(target-ms.reduce((a,b)=>a+b,0))/12;
+    ms=ms.map(v=>v+adj);
+    rIdx.push(...ms);
+  }
+  Y2026.forEach(v=>rIdx.push(Math.log(1+v/100)));
+  const r2=mulberry32(77), r3=mulberry32(91);
+  const mk=(f)=>{const a=[100];rIdx.forEach((x,i)=>a.push(a[i]*Math.exp(f(x,i))));return a};
+  return {
+    index:mk(x=>x),
+    flexi:mk(x=>0.92*x+0.0018+gauss(r2)*0.008),
+    mid:mk(x=>1.22*x+0.0025+gauss(r3)*0.015)
+  };
+}
+let SERIES=(typeof NAV_OVERRIDE!=='undefined'&&NAV_OVERRIDE)||buildSeries();
+const N_LEVELS=SERIES.index.length;
+function monthAt(k){const t=NAV_START.m+k;return {y:NAV_START.y+Math.floor(t/12),m:t%12}}
+function monthLabel(o){return MONTHS[o.m]+' '+o.y}
+const FIRST_NAV_LABEL=monthLabel(monthAt(0)), LAST_NAV_LABEL=monthLabel(monthAt(N_LEVELS-1));
+
+const FUNDS={
+  flexi:{key:'flexi',label:'Sample Flexi Cap Fund',bench:'index'},
+  mid:{key:'mid',label:'Sample Mid Cap Fund',bench:'index'},
+  index:{key:'index',label:'Sample Nifty 50 Index Fund',bench:'index'}
+};
+const EXTRA=36, MIN_WINDOWS=60;
+function getNav(fundKey,nTotal,flags){
+  let nav=SERIES[fundKey];
+  if(flags&&flags.shortHistory&&fundKey!=='index') nav=nav.slice(nav.length-100);
+  const wins=nav.length-nTotal;
+  if(wins<MIN_WINDOWS) return {nav:SERIES.index,proxy:true,label:FUNDS[fundKey].label};
+  return {nav,proxy:false,label:FUNDS[fundKey].label};
+}
+function pct(sorted,p){const i=(sorted.length-1)*p/100,lo=Math.floor(i),hi=Math.ceil(i);return sorted[lo]+(sorted[hi]-sorted[lo])*(i-lo)}
+function planContribs(kind,amount,n,pauseLeft){
+  // kind: 'keep' | 'stop' | 'pause_k' | 'reduce_p'
+  let base=Array(n).fill(amount);
+  for(let i=0;i<Math.min(pauseLeft||0,n);i++) base[i]=0;
+  if(kind==='keep')return base;
+  if(kind==='stop')return Array(n).fill(0);
+  const [k,v]=kind.split('_'),val=+v;
+  if(k==='pause'){const a=base.slice();for(let i=0;i<Math.min((pauseLeft||0)+val,n);i++)a[i]=0;return a}
+  if(k==='reduce'){return base.map(x=>x===0?0:amount*(1-val/100))}
+  if(k==='raise'){return base.map(x=>x===0?0:amount*(1+val/100))}
+  if(k==='move')return base;
+  throw new Error(kind);
+}
+function simSip(nav,c0,contribs,nWin){
+  const n=contribs.length,out=new Float64Array(nWin*n);
+  for(let s=0;s<nWin;s++){
+    let units=c0/nav[s];
+    for(let t=0;t<n;t++){units+=contribs[t]/nav[s+t];out[s*n+t]=units*nav[s+t+1]}
+  }
+  return out;
+}
+const _cache=new Map();
+function sipPaths(sip,kind,H,flags){
+  const nTotal=H+EXTRA;
+  const info=getNav(sip.fundKey,nTotal,flags);
+  const key=[sip.id,sip.fundKey,sip.value,sip.amount,sip.pauseLeft||0,sip.status,kind,H,info.proxy,(flags&&flags.shortHistory)?1:0].join('|');
+  if(_cache.has(key))return {..._cache.get(key),info};
+  const nWin=info.nav.length-nTotal;
+  const amt=sip.status==='cancelled'?0:sip.amount;
+  const contribs=planContribs(kind,amt,nTotal,sip.pauseLeft);
+  const paths=simSip(info.nav,sip.value,contribs,nWin);
+  const res={paths,nWin,nTotal};
+  _cache.set(key,res);
+  return {...res,info};
+}
+/* goal-level: sum the SIPs on the goal; the changed SIP follows `kind`, the others keep. */
+function twoFutures(sips,changedId,kind,H,target,flags){
+  // per-SIP window counts may differ (proxy); align to the minimum count using the latest windows
+  const parts=sips.map(s=>sipPaths(s,s.id===changedId?kind:'keep',H,flags));
+  const nWin=Math.min(...parts.map(p=>p.nWin)),nTotal=H+EXTRA;
+  const tot=new Float64Array(nWin*nTotal);
+  parts.forEach(p=>{const off=(p.nWin-nWin)*nTotal;for(let i=0;i<nWin*nTotal;i++)tot[i]+=p.paths[off+i]});
+  const atGoal=[],hit=[],series=[[],[],[]];
+  for(let s=0;s<nWin;s++){
+    atGoal.push(tot[s*nTotal+H-1]);
+    let h=Infinity;
+    if(target!=null){for(let t=0;t<nTotal;t++){if(tot[s*nTotal+t]>=target){h=t+1;break}}}
+    hit.push(h);
+  }
+  const sorted=atGoal.slice().sort((a,b)=>a-b);
+  for(let t=0;t<H;t++){
+    const col=new Array(nWin);for(let s=0;s<nWin;s++)col[s]=tot[s*nTotal+t];col.sort((a,b)=>a-b);
+    series[0].push(pct(col,10));series[1].push(pct(col,50));series[2].push(pct(col,90));
+  }
+  const hs=hit.slice().sort((a,b)=>a-b),med=pct(hs,50);
+  return {
+    p10:pct(sorted,10),p50:pct(sorted,50),p90:pct(sorted,90),
+    pctReach:target!=null?atGoal.filter(v=>v>=target).length/nWin*100:null,
+    medianMonths:isFinite(med)?med:null,
+    s10:series[0],s50:series[1],s90:series[2],
+    nWindows:nWin,proxyUsed:parts.some(p=>p.info.proxy),
+    firstDate:monthLabel(monthAt(0)),lastDate:monthLabel(monthAt(N_LEVELS-1))
+  };
+}
+/* drawdown episodes on monthly levels */
+function episodesFor(fundKey){
+  const nav=SERIES[fundKey==='index'?'index':fundKey],eps=[];
+  let peak=nav[0],pk=0,cur=null;
+  for(let k=1;k<nav.length;k++){
+    const v=nav[k];
+    if(v>=peak){
+      if(cur){cur.recover=k-cur.troughK;eps.push(cur);cur=null}
+      peak=v;pk=k;continue;
+    }
+    const dd=v/peak-1;
+    if(dd<=-0.10){
+      if(!cur)cur={peakK:pk,troughK:k,size:dd};
+      if(dd<cur.size){cur.size=dd;cur.troughK=k}
+    }
+  }
+  if(cur){cur.recover=null;eps.push(cur)}
+  const currentDD=nav[nav.length-1]/Math.max(...nav)-1;
+  return {eps:eps.map(e=>({peak:monthLabel(monthAt(e.peakK)),trough:monthLabel(monthAt(e.troughK)),size:e.size*100,months:e.recover})),currentDD:currentDD*100};
+}
+function ddRank(eps,dd){ // dd negative number in %
+  const sizes=eps.map(e=>e.size).concat([dd]).sort((a,b)=>a-b);
+  return sizes.indexOf(dd)+1;
+}
+function rollingReturns(fundKey,months=36){
+  const nav=SERIES[fundKey],b=SERIES.index,out={f:[],b:[]};
+  for(let k=0;k+months<nav.length;k++){
+    out.f.push((Math.pow(nav[k+months]/nav[k],12/months)-1)*100);
+    out.b.push((Math.pow(b[k+months]/b[k],12/months)-1)*100);
+  }
+  return out;
+}
+
+/* ===== HELPERS ===== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const P={
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+cal:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/>',
+target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>',
+logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/>',
+chev:'<path d="M6 9l6 6 6-6"/>',
+up:'<path d="M7 17L17 7M9 7h8v8"/>',down:'<path d="M7 7l10 10M17 9v8H9"/>',
+x:'<path d="M18 6L6 18M6 6l12 12"/>',check:'<path d="M5 13l4 4L19 7"/>',plus:'<path d="M12 5v14M5 12h14"/>',
+filter:'<path d="M4 6h16M7 12h10M10 18h4"/>',
+more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+pause:'<rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/>',
+skip:'<path d="M5 5l10 7-10 7zM19 5v14"/>',
+reduce:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+cancel:'<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>',
+lock:'<rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+copy:'<rect x="9" y="9" width="12" height="12" rx="3"/><path d="M5 15V6a3 3 0 0 1 3-3h9"/>',
+undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
+back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',fwd:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+wallet:'<path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="16.5" cy="13.5" r="1"/>',
+trend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
+trenddown:'<path d="M3 7l6 6 4-4 8 8M15 17h6v-6"/>',
+coins:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+bag:'<path d="M6 8h12l1 12H5z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+cash:'<rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="12" cy="12" r="2.5"/>',
+refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+calmove:'<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18M9 15h6M13 13l2 2-2 2"/>',
+mark:'<path d="M5 19V9l7-5 7 5v10M9 19v-6h6v6"/>'
+};
+const ic=(n,cls='')=>`<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]||''}</svg>`;
+
+const TODAY=new Date('2026-09-29T10:00:00');
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const compact=n=>{const a=Math.abs(n);if(a>=1e7)return '₹'+(n/1e7).toFixed(2)+' cr';if(a>=1e5)return '₹'+(n/1e5).toFixed(a>=1e6?1:2).replace(/\.?0+$/,'')+' lakh';return inr(n)};
+const lakhTxt=n=>{const v=n/1e5;return '₹'+(v>=100?(v/100).toFixed(2)+' crore':(Math.round(v*10)/10)+' lakh')};
+const money=n=>S.lakh?compact(n):inr(n);
+const pad=n=>String(n).padStart(2,'0');
+const monthsN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function fmtDate(s){const [y,m,d]=s.split('-').map(Number);return d+' '+monthsN[m-1]+' '+y}
+function fmtDay(s){const [y,m,d]=s.split('-').map(Number);return d+' '+monthsN[m-1]}
+function addMonthsISO(s,k){const [y,m,d]=s.split('-').map(Number);const t=y*12+(m-1)+k;return Math.floor(t/12)+'-'+pad(t%12+1)+'-'+pad(d)}
+function addDaysISO(s,k){const d=new Date(s+'T10:00:00');d.setDate(d.getDate()+k);return iso(d)}
+function goalLabel(s){const [y,m]=s.split('-').map(Number);return monthsN[m-1]+' '+y}
+function monthsTo(goalDate){const [y,m]=goalDate.split('-').map(Number);return (y*12+m-1)-(2026*12+9)+1}
+function dateOfM(m){const t=9+m-1;return monthsN[t%12]+' '+(2026+Math.floor(t/12))}
+const ord=['','largest','second largest','third largest','fourth largest','fifth largest','sixth largest','seventh largest'];
+const clone=o=>JSON.parse(JSON.stringify(o));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const plural=(n,w)=>n+' '+w+(n===1?'':'s');
+
+/* ===== PERSONAS ===== */
+const PERSONAS={
+ arjun:{id:'arjun',name:'Karthik',full:'Karthik Nair',email:'karthik.nair@gmail.com',story:'Fear-stopper with a goal',
+  goals:[{id:'g1',name:'Home down payment',target:3000000,date:'2032-12'}],
+  sips:[
+   {id:'a1',fundKey:'flexi',amount:8000,value:190000,invested:176000,nextDebit:'2026-10-05',done:22,tenure:120,goalId:'g1',xirr:12.4},
+   {id:'a2',fundKey:'mid',amount:5000,value:125000,invested:110000,nextDebit:'2026-10-07',done:22,tenure:120,goalId:'g1',xirr:15.1},
+   {id:'a3',fundKey:'index',amount:5000,value:75000,invested:70000,nextDebit:'2026-10-10',done:14,tenure:120,goalId:'g1',xirr:9.8}],
+  attempt:{sipId:'a1',type:'pause',k:3}},
+ meera:{id:'meera',name:'Meera',full:'Meera Iyer',email:'meera.iyer@gmail.com',story:'Squeeze-stopper who needs cash',
+  goals:[{id:'g1',name:'Education and safety fund',target:3000000,date:'2035-12'}],
+  sips:[
+   {id:'m1',fundKey:'index',amount:6000,value:260000,invested:246000,nextDebit:'2026-10-03',done:41,tenure:120,goalId:'g1',xirr:10.9},
+   {id:'m2',fundKey:'flexi',amount:4000,value:150000,invested:120000,nextDebit:'2026-10-12',done:30,tenure:120,goalId:'g1',xirr:13.2}],
+  attempt:{sipId:'m1',type:'cancel'}},
+ rohan:{id:'rohan',name:'Rohan',full:'Rohan Shah',email:'rohan.shah@gmail.com',story:'New investor, no goal yet',
+  goals:[],
+  sips:[{id:'r1',fundKey:'index',amount:3000,value:16000,invested:15000,nextDebit:'2026-10-06',done:5,tenure:120,goalId:null,xirr:8.1}],
+  attempt:{sipId:'r1',type:'reduce',newAmount:1000}}
+};
+const DEFAULT_FLAGS={killSwitch:false,engineFail:false,badNarr:false,failedDebit:false,shortHistory:false,shortHorizon:false,nearEnd:false,tiny:false,repeatRule:true};
+
+/* ===== STATE ===== */
+const S={persona:'arjun',mode:'calm',view:'overview',arg:null,theme:'light',lakh:false,userOff:false,
+  flags:{...DEFAULT_FLAGS},events:[],pop:null,modal:null,flow:null,demoOpen:false,demoHidden:false,
+  actFilter:'all',actQuery:'',actTab:'all',sel:{},sipFilter:'all',navRange:'5Y',toastT:null,d:null,seq:500};
+function loadPersona(id){
+  S.persona=id;const p=clone(PERSONAS[id]);
+  p.sips.forEach(s=>{s.pauseLeft=0;s.status='active';s.lastCheck=0});
+  p.decisions=[];p.notes=[];p.activities=seedActivities(p);S.d=p;
+}
+function seedActivities(p){
+  const rows=[];let n=400;
+  p.sips.forEach((s,i)=>{
+    const f=FUNDS[s.fundKey].label;
+    rows.push({id:'SIP_'+(n+i*3+2),name:'SIP installment, '+f,amount:s.amount,status:'Completed',date:'2026-09-'+pad(4+i)+' 09:1'+i,sip:s.id,ic:'coins'});
+    rows.push({id:'SIP_'+(n+i*3+1),name:'SIP installment, '+f,amount:s.amount,status:'Completed',date:'2026-08-'+pad(4+i)+' 09:1'+i,sip:s.id,ic:'coins'});
+    rows.push({id:'SCH_'+(n+i+60),name:'Next debit scheduled, '+f,amount:s.amount,status:'Pending',date:s.nextDebit+' 09:00',sip:s.id,ic:'cal'});
+  });
+  if(p.sips[0])rows.push({id:'UNT_'+(n+90),name:'Units allotted, '+FUNDS[p.sips[0].fundKey].label,amount:p.sips[0].amount,status:'In Progress',date:'2026-09-28 06:00',sip:p.sips[0].id,ic:'layers'});
+  return rows.sort((a,b)=>b.date.localeCompare(a.date));
+}
+const getSip=id=>S.d.sips.find(s=>s.id===id);
+const modeF=()=>({calm:1,fall12:.88,fall25:.75}[S.mode]);
+const sipVal=s=>s.value*modeF();
+const corpus=()=>S.d.sips.reduce((a,s)=>a+sipVal(s),0);
+const investedTot=()=>S.d.sips.reduce((a,s)=>a+s.invested,0);
+const monthlyTot=()=>S.d.sips.reduce((a,s)=>a+(s.status==='cancelled'||s.pauseLeft>0?0:s.amount),0);
+function statusOf(s){if(s.status==='cancelled')return {t:'Cancelled',c:'no'};if(s.pauseLeft>0)return {t:'Paused until '+fmtDay(s.nextDebit),c:'pa'};return {t:'Active',c:'ok'}}
+function fundDD(fundKey){
+  const e=episodesFor(fundKey);
+  const dd=S.mode==='fall12'?-12:S.mode==='fall25'?-25:e.currentDD;
+  return {eps:e.eps,dd};
+}
+function ddLabel(){const d=S.mode==='fall12'?12:S.mode==='fall25'?25:0.8;return d}
+
+/* ===== ANALYTICS ===== */
+function track(name,props={}){
+  const e={t:new Date().toLocaleTimeString('en-GB'),name,persona:S.persona,...props};
+  S.events.push(e);try{console.log('[checkpoint event]',name,props)}catch(_){}
+}
+function toast(msg){const t=$('#toast');t.innerHTML=`<div class="toast" role="status">${esc(msg)}</div>`;clearTimeout(S.toastT);S.toastT=setTimeout(()=>t.innerHTML='',2600)}
+function copyText(txt){
+  const done=()=>toast('Copied');
+  try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,()=>fb())}else fb()}catch(_){fb()}
+  function fb(){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(_){toast('Copy is blocked in this browser')}ta.remove()}
+}
+
+/* ===== NARRATION (slot templates, filtered) ===== */
+const ALLOWED_SLOTS=['goal_name','keep_goal_date','act_goal_date','keep_pct','act_pct','action_label','n_windows','fund_label','current_dd','dd_rank','n_episodes','min_recovery','max_recovery','option_label','restart_date','goal_date','delta_txt','keep_range','act_range','horizon_txt','gap_txt','fund_beat','fund_trail'];
+const NARR={
+ headline:'Keep going: {goal_name} lands around {keep_goal_date}. After {action_label}: around {act_goal_date}.',
+ headline_pct:'With this SIP running, {keep_pct}% of past windows reach {goal_name} by {goal_date}. After {action_label}, {act_pct}% do.',
+ reach:'With this SIP running, {keep_pct}% of past windows reach the goal by {goal_date}. After this change, {act_pct}% do.',
+ meaning:'Your typical goal date moves by {delta_txt}, based on how these funds behaved in the past.',
+ little:'This change barely moves your goal.',
+ little_meaning:'Past windows show almost no difference in when the goal is reached.',
+ nogoal_head:'Keep going: this SIP grows to about {keep_range} over {horizon_txt}. After {action_label}: about {act_range}.',
+ nogoal_meaning:'The typical result differs by {gap_txt} at the end of that period.',
+ short:'Short horizons produce wide ranges.',
+ c3a_intro:"Today's fall of {current_dd}% is the {dd_rank} of {n_episodes} falls of ten percent or more in this fund's history.",
+ c3a_calm:"This fund sits {current_dd}% below its latest peak. Falls of ten percent or more happened {n_episodes} times before.",
+ c3a_recovery:'After each fall, this fund took between {min_recovery} and {max_recovery} months to regain its earlier peak.',
+ c3b:'Cash needs are a normal reason to change a SIP. These options keep it simple.',
+ c3c_beat:'Over {n_windows} rolling three-year windows, this fund finished ahead of its benchmark {fund_beat}% of the time and behind {fund_trail}% of the time.',
+ c3c_index:'This fund tracks its index, so its three-year returns move close to the benchmark.',
+ c3c:'Stopping this SIP and changing funds are separate decisions. Checkpoint does not suggest other funds.',
+ c3d:'Change the target or the date and the two futures update at once.'
+};
+const FALLBACK={headline:'Here is what this change does to your goal, based on past behaviour.',headline_pct:'Here is what this change does to your goal, based on past behaviour.',reach:'The share of past windows that reach the goal changes after this action.',meaning:'The numbers below come from how these funds behaved in the past.',nogoal_head:'Here is what this change does to your SIP, based on past behaviour.'};
+const BAD_NARR='You should keep going, this will grow to 30 lakh and it is the best time to stay invested.';
+const DENY=[/you should/i,/you must/i,/don'?t stop/i,/do not stop/i,/best time/i,/will grow/i,/guaranteed/i,/\bbuy\b/i,/\bsell\b/i,/switch to/i,/\brecommend/i];
+function filterCheck(txt){
+  const bad=[];
+  if(/\d/.test(txt))bad.push('contains a digit');
+  (txt.match(/\{(\w+)\}/g)||[]).forEach(t=>{if(!ALLOWED_SLOTS.includes(t.slice(1,-1)))bad.push('unknown slot '+t)});
+  DENY.forEach(r=>{if(r.test(txt))bad.push('deny-list: '+r.source)});
+  txt.split(/[.!?]+\s/).forEach(s=>{if(s.trim().split(/\s+/).length>25)bad.push('sentence over 25 words')});
+  return bad;
+}
+function filterReport(){
+  const keys=Object.keys(NARR);let fails=0;keys.forEach(k=>{if(filterCheck(NARR[k]).length)fails++});
+  const bad=filterCheck(BAD_NARR);
+  return {total:keys.length,fails,sample:BAD_NARR,sampleReasons:bad};
+}
+function narr(key,slots){
+  let raw=(S.flags.badNarr&&(key==='headline'||key==='headline_pct'||key==='nogoal_head'))?BAD_NARR:NARR[key];
+  const issues=filterCheck(raw);
+  if(issues.length){S._fbSeen=S._fbSeen||{};if(!S._fbSeen[key]){S._fbSeen[key]=1;track('error_fallback',{type:'narration_filter',reason:issues[0]})}S.usedFallback=true;raw=FALLBACK[key]||FALLBACK.headline}
+  return raw.replace(/\{(\w+)\}/g,(m,k)=>slots[k]!=null?slots[k]:'');
+}
+
+/* ===== CHARTS ===== */
+function gainBars(){
+  const I=investedTot(),m=S.d.sips.reduce((a,s)=>a+s.amount,0),V=corpus(),gEnd=V/I-1,peakV=S.d.sips.reduce((a,s)=>a+s.value,0),gPeak=peakV/I-1;
+  const labels=['Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'];
+  return labels.map((l,i)=>{
+    const inv=I-m*(7-i);let g;
+    if(S.mode==='calm')g=gPeak*(0.3+0.7*i/7)*(1+((i%3)-1)*0.1);
+    else{const pk=4;g=i<=pk?gPeak*(0.3+0.7*i/pk):gPeak+(gEnd-gPeak)*(i-pk)/(7-pk)}
+    if(i===7)g=gEnd;
+    return {l,gain:inv*g}
+  });
+}
+function chartGain(){
+  const d=gainBars(),W=470,H=250,pl=44,pb=26,pt=10,mx=Math.max(...d.map(x=>Math.abs(x.gain)),1000)*1.15;
+  const neg=d.some(x=>x.gain<0),y0=neg?pt+(H-pt-pb)/2:H-pb,sc=(neg?(H-pt-pb)/2:(H-pt-pb))/mx,bw=(W-pl-10)/d.length;
+  let g='';
+  (neg?[-1,-.5,0,.5,1]:[0,.5,1]).forEach(t=>{const y=y0-t*mx*sc;g+=`<line x1="${pl}" x2="${W-6}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-dasharray="${t===0?'':'3 4'}"/><text x="${pl-8}" y="${y+4}" text-anchor="end">${t===0?'0':(t*mx/1000>0?'+':'')+Math.round(t*mx/1000)+'k'}</text>`});
+  d.forEach((x,i)=>{
+    const h=Math.abs(x.gain)*sc,cx=pl+i*bw+bw*.18,w=bw*.64,pos=x.gain>=0;
+    g+=`<g><title>${x.l}: ${pos?'gain':'loss'} of ${inr(Math.abs(x.gain))}</title><rect x="${cx}" y="${pos?y0-h:y0}" width="${w}" height="${Math.max(h,2)}" rx="8" fill="${pos?'url(#hat)':'var(--dark)'}"/></g><text x="${cx+w/2}" y="${H-6}" text-anchor="middle">${x.l}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Gain or loss by month"><defs><pattern id="hat" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#ff8a4d"/><rect width="3" height="6" fill="#f15a24"/></pattern></defs>${g}</svg>`;
+}
+function fmtL(v){const l=v/1e5;return l>=100?(l/100).toFixed(1)+' cr':(l>=10?Math.round(l):Math.round(l*10)/10)+'L'}
+function chartTwo(keep,act,target,H,showGoal){
+  const W=720,Ht=310,pl=54,pr=14,pt=14,pb=30;
+  const yMax=Math.max(keep.s90[H-1],act.s90[H-1],showGoal?target*1.12:0)*1.06;
+  const X=t=>pl+(W-pl-pr)*t/Math.max(1,H-1),Y=v=>pt+(Ht-pt-pb)*(1-v/yMax);
+  const band=(r,fill)=>{let up='',dn='';for(let t=0;t<H;t++){up+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(r.s90[t]).toFixed(1)}for(let t=H-1;t>=0;t--){dn+='L'+X(t).toFixed(1)+' '+Y(r.s10[t]).toFixed(1)}return `<path d="${up}${dn}Z" fill="${fill}"/>`};
+  const line=(r,col,w,dash)=>{let p='';for(let t=0;t<H;t++)p+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(r.s50[t]).toFixed(1);return `<path d="${p}" fill="none" stroke="${col}" stroke-width="${w}" ${dash?'stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`};
+  let grid='';const step=niceStep(yMax/4);
+  for(let v=0;v<=yMax;v+=step){grid+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="${v===0?'':'3 4'}"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end">${v===0?'0':fmtL(v)}</text>`}
+  let xl='';const ys=Math.max(1,Math.round(H/12/6));
+  for(let t=11;t<H;t+=12*ys){xl+=`<text x="${X(t)}" y="${Ht-8}" text-anchor="middle">${dateOfM(t+1).split(' ')[1]}</text>`}
+  const gl=showGoal?`<line x1="${pl}" x2="${W-pr}" y1="${Y(target)}" y2="${Y(target)}" stroke="var(--good)" stroke-width="1.6" stroke-dasharray="6 5"/><text x="${W-pr-4}" y="${Y(target)-6}" text-anchor="end" style="fill:var(--good);font-weight:600">Goal ${lakhTxt(target)}</text>`:'';
+  return `<div class="tfchart" style="position:relative" data-h="${H}"><svg viewBox="0 0 ${W} ${Ht}" width="100%" role="img" aria-label="Two futures chart: range of outcomes if you keep the SIP and after your change">${grid}${xl}${gl}${band(keep,'rgba(120,124,135,.20)')}${band(act,'rgba(241,90,36,.24)')}${line(keep,'var(--ink)',2.2)}${line(act,'var(--accent)',2.6)}<line class="cross" x1="0" x2="0" y1="${pt}" y2="${Ht-pb}" stroke="var(--ink3)" stroke-dasharray="3 3" style="display:none"/><rect class="hit" x="${pl}" y="${pt}" width="${W-pl-pr}" height="${Ht-pt-pb}" fill="transparent" data-pl="${pl}" data-w="${W-pl-pr}"/></svg><div class="tip" style="display:none;position:absolute;top:8px;background:var(--dark);color:var(--onDark);border-radius:12px;padding:8px 12px;font-size:12px;pointer-events:none;white-space:nowrap"></div></div>`;
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return (n<1.5?1:n<3.5?2.5:n<7.5?5:10)*p}
+function sparkline(fundKey,range){
+  const nav=SERIES[fundKey],n={'1Y':12,'3Y':36,'5Y':60,'All':nav.length}[range]||60,sl=nav.slice(-n-1),base=sl[0];
+  const W=620,H=200,pl=40,pb=24,pt=10,mn=Math.min(...sl)/base*100,mx=Math.max(...sl)/base*100;
+  const X=i=>pl+(W-pl-8)*i/(sl.length-1),Y=v=>pt+(H-pt-pb)*(1-(v-mn)/(mx-mn||1));
+  let p='';sl.forEach((v,i)=>p+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v/base*100).toFixed(1));
+  const area=p+`L${X(sl.length-1)} ${H-pb}L${X(0)} ${H-pb}Z`;
+  const lastK=nav.length-1-n,fl=monthLabel(monthAt(Math.max(0,lastK))),ll=monthLabel(monthAt(nav.length-1));
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Indexed NAV history"><defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f15a24" stop-opacity=".35"/><stop offset="1" stop-color="#f15a24" stop-opacity="0"/></linearGradient></defs>
+  <text x="${pl-6}" y="${Y(mx)+4}" text-anchor="end">${Math.round(mx)}</text><text x="${pl-6}" y="${Y(mn)+4}" text-anchor="end">${Math.round(mn)}</text>
+  <path d="${area}" fill="url(#sg)"/><path d="${p}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+  <text x="${pl}" y="${H-6}">${fl}</text><text x="${W-8}" y="${H-6}" text-anchor="end">${ll}</text></svg>`;
+}
+
+/* ===== SHELL ===== */
+const NAV=[['overview','Overview','grid'],['sips','My SIPs','cal'],['goals','Goals','target'],['activity','Activity','list'],['insights','Insights','chart']];
+function notifs(){
+  const n=[];const soon=S.d.sips.filter(s=>s.status!=='cancelled').slice().sort((a,b)=>a.nextDebit.localeCompare(b.nextDebit))[0];
+  if(soon)n.push({t:'Upcoming debit',b:`${inr(soon.amount)} on ${fmtDay(soon.nextDebit)} for ${FUNDS[soon.fundKey].label}`,a:'sip',p:soon.id});
+  S.d.decisions.filter(x=>x.followup).forEach(x=>n.push({t:'Check-in on '+fmtDay(x.followup),b:'Preview the 90 day check-in for your '+x.short,a:'checkin',p:x.id}));
+  if(S.mode!=='calm')n.push({t:'Markets are down',b:'Your SIPs are running as planned. Nothing needs your action.',a:'view',p:'overview'});
+  n.push({t:'Checkpoint is '+(S.userOff||S.flags.killSwitch?'off':'on'),b:'See what it shows, what data it uses and how to turn it off.',a:'view',p:'settings'});
+  return n;
+}
+function shell(inner){
+  const p=S.d,hasN=notifs().length>0;
+  return `<div class="shell">
+  <header class="topbar">
+    <div class="pill logo"><span class="mark">${ic('mark')}</span>FinLit</div>
+    <nav class="pill navpill" aria-label="Main">${NAV.map(([k,l])=>`<button data-a="view" data-p="${k}" class="${S.view===k||(k==='sips'&&S.view==='sip')?'on':''}">${l}</button>`).join('')}</nav>
+    <div class="pill actpill">
+      <button class="ibtn" data-a="toggletheme" aria-label="${S.theme==='dark'?'Switch to light mode':'Switch to dark mode'}" title="${S.theme==='dark'?'Light mode':'Dark mode'}">${ic(S.theme==='dark'?'sun':'moon')}</button>
+      <button class="ibtn fmtbtn" data-a="togglelakh" aria-label="Number format" title="Show amounts in ${S.lakh?'full rupees':'lakh and crore'}">${S.lakh?'₹ Lakh':'₹ Full'}</button>
+      <button class="ibtn" data-a="search" aria-label="Search">${ic('search')}</button>
+      <button class="ibtn" data-a="pop" data-p="bell" aria-label="Notifications">${ic('bell')}${hasN?'<span class="dot"></span>':''}</button>
+      <button class="ibtn" data-a="modal" data-p="about" aria-label="About this prototype">${ic('info')}</button>
+    </div>
+    <button class="userchip" data-a="pop" data-p="user" aria-label="Account and demo persona"><span class="avatar">${p.name[0]}</span><div><div class="n">${esc(p.full)}</div><div class="e">${esc(p.email)}</div></div>${ic('chev')}</button>
+  </header>
+  <aside class="rail">
+    <div class="grp lbl">${[['health','Health','heart'],['sim','Simulate','flask'],['how','How it works','flow'],['settings','Controls','sliders']].map(([k,l,i])=>`<button class="rbtn ${S.view===k?'on':''}" data-a="view" data-p="${k}" aria-label="${l}"><span>${ic(i)}</span><small>${l}</small></button>`).join('')}</div>
+    <div class="sp"></div>
+    <div class="grp lbl"><button class="rbtn" data-a="dstart" data-p="${S.persona}" aria-label="Try ${esc(S.d.name)}'s SIP change" title="Try ${esc(S.d.name)}'s SIP change"><span>${ic('play')}</span><small>Try it</small></button><button class="rbtn ${S.mode!=='calm'?'on':''}" data-a="dcycle" aria-label="Market mode" title="Market mode: ${S.mode==='calm'?'calm':S.mode==='fall12'?'fall of about 12%':'sharp fall of about 25%'}. Tap to change."><span>${ic('trenddown')}</span><small>Market</small></button></div>
+    <div class="grp"><button class="ibtn" data-a="modal" data-p="help" aria-label="Demo guide">${ic('help')}</button><button class="ibtn" data-a="modal" data-p="resetask" aria-label="Reset demo">${ic('logout')}</button></div>
+  </aside>
+  <main class="main" id="main">${inner}</main>
+  </div>
+  <nav class="mobnav" aria-label="Main">${NAV.map(([k,l,i])=>`<button data-a="view" data-p="${k}" class="${S.view===k||(k==='sips'&&S.view==='sip')?'on':''}" aria-label="${l}">${ic(i)}</button>`).join('')}<button data-a="pop" data-p="tools" class="${['health','sim','how','settings'].includes(S.view)?'on':''}" aria-label="More tools">${ic('more')}</button></nav>`;
+}
+function greeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening'}
+
+/* ===== VIEWS ===== */
+function stamp(s){const [d,t]=s.split(' ');const [y,m,dd]=d.split('-').map(Number);let [h,mi]=(t||'09:00').split(':').map(Number);const ap=h>=12?'PM':'AM';h=h%12||12;return dd+' '+monthsN[m-1]+', '+y+' '+pad(h)+':'+pad(mi)+' '+ap}
+function filteredActs(){
+  let r=S.d.activities.slice();
+  if(S.actTab==='cp')r=r.filter(x=>x.id.startsWith('CHK'));
+  if(S.actFilter!=='all')r=r.filter(x=>S.actFilter==='Checkpoint'?x.id.startsWith('CHK'):x.status===S.actFilter);
+  const q=S.actQuery.trim().toLowerCase();if(q)r=r.filter(x=>(x.id+' '+x.name+' '+x.status+' '+stamp(x.date)).toLowerCase().includes(q));
+  return r;
+}
+function actRows(limit){
+  const r=filteredActs().slice(0,limit||999);
+  if(!r.length)return `<tr><td colspan="7"><div class="empty">${S.actQuery||S.actFilter!=='all'?'No activity matches. Clear the search or filter.':'No activity yet.'}</div></td></tr>`;
+  const col={Completed:'var(--good)',Pending:'var(--bad)','In Progress':'var(--warn)'};
+  return r.map(x=>`<tr class="${S.sel[x.id]?'sel':''}"><td><button class="chk ${S.sel[x.id]?'on':''}" data-a="rowsel" data-p="${x.id}" aria-label="Select ${x.id}">${S.sel[x.id]?ic('check'):''}</button></td><td>${x.id}</td><td><span class="actname"><span class="ai">${ic(x.ic||'coins')}</span>${esc(x.name)}</span></td><td>${money(x.amount)}</td><td><span class="dot2" style="background:${col[x.status]||'var(--ink3)'}"></span>${x.status}</td><td>${stamp(x.date)}</td><td><button class="ibtn" style="width:32px;height:32px" data-a="pop" data-p="row:${x.id}" aria-label="Row actions">${ic('more')}</button></td></tr>`).join('');
+}
+function actCard(limit,title){
+  const nsel=Object.values(S.sel).filter(Boolean).length;
+  return `<section class="card act"><div class="hd"><div><h3>${title||'Recent activities'}</h3>${nsel?`<div class="hint">${nsel} selected. <button class="linkbtn" style="padding:0" data-a="clearsel">Clear</button></div>`:''}</div>
+   <div class="tools"><label class="search">${ic('search')}<input id="actq" data-in="actq" placeholder="Search" value="${esc(S.actQuery)}" aria-label="Search activity"></label><button class="fbtn" data-a="pop" data-p="filter">${S.actFilter==='all'?'Filter':esc(S.actFilter)}${ic('filter')}</button></div></div>
+   <div class="tablewrap"><table><thead><tr><th style="width:44px"><button class="chk ${nsel&&nsel===filteredActs().length?'on':''}" data-a="selall" aria-label="Select all">${nsel&&nsel===filteredActs().length?ic('check'):''}</button></th><th>Ref ID</th><th>Activity</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="actbody">${actRows(limit)}</tbody></table></div></section>`;
+}
+function viewOverview(){
+  const d=S.d,V=corpus(),I=investedTot(),ddv=S.mode==='fall12'?12:S.mode==='fall25'?25:0;
+  const xirr=d.sips.reduce((a,s)=>a+s.xirr*s.value,0)/d.sips.reduce((a,s)=>a+s.value,0)-(ddv?ddv*.3:0);
+  const g0=d.goals[0],saved=g0?d.sips.filter(s=>s.goalId===g0.id).reduce((a,s)=>a+sipVal(s),0):0,gp=g0?Math.min(100,saved/g0.target*100):0;
+  const chk=d.decisions.find(x=>x.followup);
+  return `<h1 class="greet">${greeting()}, ${esc(d.name)}</h1><p class="sub">Stay on top of your SIPs, track your goals and see what changed.</p>
+  ${chk?`<div class="card" style="margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between"><div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="background:var(--accentSoft);color:var(--accent)">${ic('clock')}</span><div><b>Check-in on ${fmtDate(chk.followup)}</b><div class="hint" style="margin:0;color:var(--ink2)">You changed ${esc(chk.short)}. Preview the check-in you will get.</div></div></div><button class="btn dark sm" data-a="modal" data-p="checkin:${chk.id}">Preview check-in</button></div>`:''}
+  <div class="grid">
+   <section class="card bal"><div class="hd" style="margin-bottom:0"><span class="lbl">Total corpus</span></div>
+    <div class="big">${money(V)}</div>
+    ${ddv?`<span class="badge r">${ic('down')} Down ${ddv}% from peak</span>`:`<span class="badge g">${ic('up')} Near its peak</span>`}
+    <div class="btnrow"><button class="btn dark" data-a="modal" data-p="addsip">${ic('plus')} Add SIP</button><button class="btn soft" data-a="view" data-p="sips">${ic('sliders')} Modify a SIP</button></div>
+    <div class="walletbox"><p class="t">SIPs <span style="color:var(--ink3)">|</span> <b>Total ${d.sips.length} SIPs</b></p><div class="mini">${d.sips.map(s=>{const st=statusOf(s);return `<button data-a="sip" data-p="${s.id}"><div class="f"><i class="${s.fundKey==='mid'?'m':s.fundKey==='index'?'ix':''}"></i>${s.fundKey==='flexi'?'Flexi':s.fundKey==='mid'?'Mid':'Index'}</div><div class="a">${s.status==='cancelled'?'-':inr(s.amount)}</div><div class="s">Next ${fmtDay(s.nextDebit)}</div><div class="st ${st.c}">${st.t}</div></button>`}).join('')}</div></div>
+   </section>
+   <section class="tiles">
+    ${[['xirr','XIRR',xirr.toFixed(1)+'%','trend',ddv?`<span class="badge">${ic('down')} ${ddv>15?'9.1':'4.2'}% this month</span>`:`<span class="badge">${ic('up')} 0.6% this month</span>`,true],
+       ['monthly','Monthly SIPs',money(monthlyTot()),'cal',`<span class="badge g">${d.sips.filter(s=>s.status!=='cancelled'&&!s.pauseLeft).length} active</span>`],
+       ['invested','Invested',money(I),'wallet',`<span class="badge g">${ic('up')} ${money(d.sips.reduce((a,s)=>a+s.amount,0))} this month</span>`],
+       ['value','Current value',money(V),'coins',ddv?`<span class="badge r">${ic('down')} ${ddv}% from peak</span>`:`<span class="badge g">${ic('up')} ${((V/I-1)*100).toFixed(1)}% gain</span>`]]
+      .map(([k,l,v,i,b,hot])=>`<button class="tile ${hot?'hot':''}" data-a="modal" data-p="break:${k}"><span class="ic">${ic(i)}</span><div class="l">${l}</div><div class="v">${v}</div>${b}</button>`).join('')}
+   </section>
+   <section class="card chartcard"><h3>Gain or loss</h3><div class="hint">Current value minus what you invested, last 8 months</div><div class="chartbox"><div class="top"><span>Portfolio</span><span class="legend"><span><i class="hatch"></i>Gain</span><span><i style="background:var(--dark)"></i>Loss</span></span></div>${chartGain()}</div></section>
+   </div>
+  <div class="ovrow">${goalsCard()}${suggestCard()}</div>
+  ${marketSummary()}`;
+}
+
+/* ===== SUGGESTIONS AND MARKET INSIGHTS ===== */
+function suggestions(){
+  const out=[],d=S.d,name=s=>FUNDS[s.fundKey].label.replace('Sample ','');
+  const active=d.sips.filter(s=>s.status!=='cancelled');
+  if(!d.goals.length&&active.length)out.push({i:'target',t:'Add a goal',b:'Checkpoint can only measure a SIP change in rupees and months once a goal exists.',btn:'Add a goal',a:'modal',p:'goalnew'});
+  else{const u=active.find(s=>!s.goalId);if(u)out.push({i:'target',t:'Link '+name(u)+' to a goal',b:'This SIP has no goal, so a change to it cannot be measured against a target.',btn:'Open SIP',a:'sip',p:u.id})}
+  d.goals.forEach(g=>{
+    const linked=active.filter(s=>s.goalId===g.id),H=monthsTo(g.date);if(!linked.length||H<12)return;
+    try{
+      const base=twoFutures(linked,null,'keep',H,g.target,S.flags);
+      if(base.pctReach<70){
+        const top=linked.slice().sort((a,b)=>b.amount-a.amount)[0],na=Math.round(top.amount*1.25/100)*100;
+        const r=twoFutures(linked,top.id,'raise_25',H,g.target,S.flags);
+        out.push({i:'trend',t:'Improve the odds on '+g.name,b:`Today ${Math.round(base.pctReach)}% of past windows reach this goal. With your ${name(top)} SIP at ${inr(na)}, ${Math.round(r.pctReach)}% do.`,btn:'Raise to '+inr(na),a:'raiseask',p:top.id+':'+na})}
+    }catch(e){}
+  });
+  d.sips.filter(s=>s.status==='cancelled').forEach(s=>out.push({i:'refresh',t:'Restart '+name(s),b:'You cancelled this SIP. Restart it to resume monthly investing.',btn:'Restart SIP',a:'restart',p:s.id}));
+  d.decisions.filter(x=>x.followup).slice(0,1).forEach(x=>out.push({i:'clock',t:'Your 90 day check-in',b:'You changed '+x.short+'. Preview the check-in card you will get on '+fmtDate(x.followup)+'.',btn:'Preview check-in',a:'modal',p:'checkin:'+x.id}));
+  if(S.mode!=='calm')out.push({i:'trenddown',t:'Markets are down',b:'Your SIPs run as planned. See how past falls of this size played out and how long each took to recover.',btn:'See market insights',a:'scrollmkt'});
+  return out;
+}
+function goalsCard(){
+  const d=S.d;
+  const rows=d.goals.slice(0,2).map(g=>{const saved=d.sips.filter(s=>s.goalId===g.id).reduce((a,s)=>a+sipVal(s),0),p=Math.min(100,saved/g.target*100);
+    return `<div class="grow"><div class="gtop"><b>${esc(g.name)}</b><span class="hint" style="margin:0">${money(g.target)} by ${goalLabel(g.date)}</span></div><div class="bar"><div style="width:${p}%"></div></div><div class="barfoot"><span><b>${money(saved)}</b> saved</span><span>${Math.round(p)}% of target</span></div></div>`}).join('');
+  return `<section class="card"><div class="hd"><h3>${d.goals.length>1?'Goals':'Goal'}</h3><div style="display:flex;gap:8px"><button class="btn soft sm" data-a="modal" data-p="goalnew">${ic('plus')} Add goal</button>${d.goals.length?`<button class="btn dark sm" data-a="view" data-p="goals">View goal${d.goals.length>1?'s':''}</button>`:''}</div></div>${rows||'<p class="hint">Tag a goal to a SIP and Checkpoint can show what a change does to it.</p>'}</section>`;
+}
+function suggestCard(){
+  const list=suggestions().slice(0,3);
+  return `<section class="card"><div class="hd"><div><h3>Suggested next steps</h3><div class="hint" style="margin:0">Built from your SIPs, goals and past behaviour. Not investment advice.</div></div><span class="tag o">${ic('sparkle')} Live</span></div>
+  ${list.length?`<div class="sugrow v">${list.map(x=>`<div class="sug"><div class="sh"><span class="si">${ic(x.i)}</span>${esc(x.t)}</div><p>${esc(x.b)}</p><button class="btn dark sm" data-a="${x.a}" ${x.p!=null?`data-p="${esc(x.p)}"`:''}>${esc(x.btn)}</button></div>`).join('')}</div>`:`<div class="callout" style="margin:0">Nothing needs your action. Your SIPs and goals are on track for the plan you set.</div>`}</section>`;
+}
+function marketCard(){
+  const fk=S.mktFund||'index',nav=SERIES[fk],n=nav.length,short={index:'Index',flexi:'Flexi cap',mid:'Mid cap'};
+  const ret=m=>{const a=nav[n-1]/nav[n-1-m];return m>=12?(Math.pow(a,12/m)-1)*100:(a-1)*100};
+  const {eps,dd}=fundDD(fk),rec=eps.map(e=>e.months).filter(x=>x!=null),falling=dd<=-10,rr=rollingReturns(fk);
+  const q=a=>{const t=a.slice().sort((x,y)=>x-y);return [pct(t,10),pct(t,50),pct(t,90)]},fq=q(rr.f);
+  const top=eps.slice().sort((a,b)=>a.size-b.size).slice(0,4),mx=Math.max(...top.map(e=>Math.abs(e.size)),Math.abs(dd),1);
+  const pos=x=>(x>=0?'+':'')+x.toFixed(1)+'%';
+  const line1=falling?`${short[fk]} sits ${Math.abs(dd).toFixed(0)}% below its latest peak. That is the ${ord[ddRank(eps,dd)]||''} of ${eps.length+1} falls of ten percent or more since ${FIRST_NAV_LABEL}.`:dd<-2?`${short[fk]} sits ${Math.abs(dd).toFixed(1)}% below its latest peak, short of a ten percent fall.`:`${short[fk]} sits near its latest peak.`;
+  const line2=rec.length?`Past falls of ten percent or more took between ${Math.min(...rec)} and ${Math.max(...rec)} months to regain the earlier peak.`:'';
+  const line3=`Across ${fq.length?rr.f.length:0} rolling three-year windows, annual returns ran from ${fq[0].toFixed(0)}% to ${fq[2].toFixed(0)}%, with a middle case of ${fq[1].toFixed(0)}%.`;
+  return `<section class="card" id="mkt" style="margin-bottom:18px"><div class="hd"><div><h3>Market insights</h3><div class="hint" style="margin:0">Plain-language read of what the history shows. Prototype series.</div></div>
+   <div class="tabs">${Object.keys(short).map(k=>`<button data-a="mktf" data-p="${k}" class="${fk===k?'on':''}">${short[k]}</button>`).join('')}</div></div>
+   <div class="cols2" style="grid-template-columns:1.1fr .9fr;align-items:start">
+    <div><div class="tabs" style="margin-bottom:8px">${['1Y','3Y','5Y','All'].map(k=>`<button data-a="navr" data-p="${k}" class="${S.navRange===k?'on':''}">${k}</button>`).join('')}</div>
+     <div class="hint" style="margin:0 0 6px">Indexed to 100 at the start of the range.</div>${sparkline(fk,S.navRange)}</div>
+    <div><div class="kv" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="stat"><div class="l">1 year</div><div class="v">${pos(ret(12))}</div></div>
+      <div class="stat"><div class="l">3 years, per year</div><div class="v">${pos(ret(36))}</div></div>
+      <div class="stat"><div class="l">5 years, per year</div><div class="v">${pos(ret(60))}</div></div>
+      <div class="stat"><div class="l">From latest peak</div><div class="v">${(dd>0?0:dd).toFixed(1)}%</div></div></div>
+     <div class="callout" style="margin:14px 0 0"><b>The read</b><div style="margin-top:4px">${esc(line1)} ${esc(line2)}</div><div style="margin-top:6px">${esc(line3)}</div></div></div>
+   </div>
+   <h4 style="margin:18px 0 8px;font-size:14px">Biggest past falls${falling?' and today':''}</h4>
+   <div class="bars">${top.map(e=>`<div class="hb" style="grid-template-columns:150px 1fr 140px"><span>${e.peak} to ${e.trough}</span><div class="b dk"><div style="width:${Math.abs(e.size)/mx*100}%"></div></div><span>${e.size.toFixed(0)}%, ${e.months!=null?e.months+' mo back':'not yet back'}</span></div>`).join('')}${falling?`<div class="hb" style="grid-template-columns:150px 1fr 140px"><b>Today</b><div class="b"><div style="width:${Math.abs(dd)/mx*100}%"></div></div><b>${dd.toFixed(0)}%</b></div>`:''}</div>
+   <p class="disc" style="color:var(--ink3);font-size:11.5px;margin:12px 0 0">History describes the past. It does not predict returns and does not recommend any fund or trade.</p></section>`;
+}
+/* compact version for Overview: one tile per fund plus a one-line read, full card lives on Insights */
+function marketSummary(){
+  const short={index:'Index',flexi:'Flexi cap',mid:'Mid cap'},pos=x=>(x>=0?'+':'')+x.toFixed(1)+'%';
+  const tiles=Object.keys(short).map(k=>{
+    const nav=SERIES[k],n=nav.length,r1=(nav[n-1]/nav[n-13]-1)*100,{dd}=fundDD(k),d=dd>0?0:dd;
+    return `<button class="stat" style="text-align:left" data-a="mktjump" data-p="${k}"><div class="l">${short[k]}</div><div class="v" style="font-size:20px">${pos(r1)}</div><div class="hint" style="margin:2px 0 0">1 year. ${d<=-2?Math.abs(d).toFixed(1)+'% below peak':'Near its peak'}</div></button>`}).join('');
+  const {eps,dd}=fundDD('index'),rec=eps.map(e=>e.months).filter(x=>x!=null);
+  const read=(dd<=-10?`Index sits ${Math.abs(dd).toFixed(0)}% below its latest peak.`:dd<-2?`Index sits ${Math.abs(dd).toFixed(1)}% below its latest peak, short of a ten percent fall.`:'Index sits near its latest peak.')+(rec.length?` Past falls of ten percent or more took ${Math.min(...rec)} to ${Math.max(...rec)} months to recover.`:'');
+  return `<section class="card" style="margin-top:18px"><div class="hd"><div><h3>Market insights</h3><div class="hint" style="margin:0">Summary of fund history. Prototype series.</div></div><button class="btn dark sm" data-a="mktjump" data-p="${S.mktFund||'index'}">Full insights ${ic('fwd')}</button></div>
+   <div class="kv" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">${tiles}</div>
+   <p class="hint" style="margin:12px 0 0;color:var(--ink2)">${esc(read)}</p></section>`;
+}
+
+
+/* ===== RAIL TOOLS: HEALTH, SIMULATE, HOW IT WORKS ===== */
+Object.assign(P,{
+ heart:'<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21l8.8-8.3a5 5 0 0 0 0-7.1z"/>',
+ flask:'<path d="M9 3h6M10 3v6l-5.2 9.3A2 2 0 0 0 5.6 21h12.8a2 2 0 0 0 1.8-2.7L15 9V3"/><path d="M7.5 15h9"/>',
+ play:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z"/>',
+ flow:'<circle cx="5" cy="6" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="18" r="2"/><path d="M7 6h4a3 3 0 0 1 3 3 3 3 0 0 0 3 3M7 18h4a3 3 0 0 0 3-3"/>'
+});
+S.sim={tab:'what',sipId:null,type:'pause',k:3,pct:50,years:5,fund:'index',fall:0,amt:10000};S.ask=0;
+const fundShort=k=>({index:'Index',flexi:'Flexi cap',mid:'Mid cap'}[k]);
+const worstFall=k=>{const e=episodesFor(k).eps;return e.length?Math.min(...e.map(x=>x.size)):0};
+const longestBack=k=>{const r=episodesFor(k).eps.map(e=>e.months).filter(x=>x!=null);return r.length?Math.max(...r):null};
+const parseM=l=>{const [m,y]=l.split(' ');return (+y-NAV_START.y)*12+MONTHS.indexOf(m)-NAV_START.m};
+
+/* ---- Portfolio health ---- */
+function fundShares(){
+  const m={};S.d.sips.filter(s=>s.status!=='cancelled').forEach(s=>{m[s.fundKey]=(m[s.fundKey]||0)+(sipVal(s)>0?sipVal(s):0)});
+  let ent=Object.entries(m).filter(([k,v])=>v>0);
+  if(!ent.length){const a={};S.d.sips.filter(s=>s.status!=='cancelled').forEach(s=>{a[s.fundKey]=(a[s.fundKey]||0)+s.amount});ent=Object.entries(a)}
+  const tot=ent.reduce((a,[k,v])=>a+v,0)||1;
+  return ent.map(([k,v])=>({k,v,sh:v/tot*100})).sort((a,b)=>b.v-a.v);
+}
+function healthChecks(){
+  const d=S.d,out=[],sh=fundShares(),act=d.sips.filter(s=>s.status!=='cancelled');
+  if(!d.goals.length)out.push({i:'target',t:'Goal on track',st:'watch',hl:'No goal set yet',b:'Checkpoint can show ranges without a goal. It cannot say whether you are on track.',why:'A goal turns a SIP change into rupees and months.',btn:'Add a goal',a:'modal',p:'goalnew'});
+  d.goals.slice(0,2).forEach(g=>{
+    const st=goalStatus(g);
+    if(!st)out.push({i:'target',t:'Goal on track: '+g.name,st:'watch',hl:'No SIP linked yet',b:'Link a SIP to this goal to see whether it is on track.',why:'Checkpoint measures a change against the SIPs that feed a goal.',btn:'View goal',a:'view',p:'goals'});
+    else if(st.short)out.push({i:'target',t:'Goal on track: '+g.name,st:'info',hl:'Under 12 months away',b:'With a short horizon the range of outcomes is wide, so one on-track number would mislead.',why:'Checkpoint shows a range in this case.',btn:'View goal',a:'view',p:'goals'});
+    else{const r=Math.round(st.reach);out.push({i:'target',t:'Goal on track: '+g.name,st:r>=70?'good':r>=40?'watch':'risk',hl:r+'% of past windows reach it',b:`Of ${st.n} past start dates, ${r}% ended at or above ${lakhTxt(g.target)} by ${goalLabel(g.date)}. The middle case ends near ${lakhTxt(st.p50)}.`,why:'This is a history check, not a forecast. It shows how often a plan like yours reached the target.',btn:'View goal',a:'view',p:'goals'})}
+  });
+  if(sh.length){
+    const top=sh[0],n=sh.length;
+    out.push({i:'layers',t:'Spread across funds',st:(n===1||top.sh>60)?'watch':'good',hl:`${fundShort(top.k)} holds ${Math.round(top.sh)}% of your value`,b:n===1?'All of your value sits in one fund.':`Your value is split across ${n} funds.`,why:'A mix that leans on one fund moves closely with that fund. This describes your mix and is not a call to change it. Checkpoint does not suggest other funds.',btn:'See '+fundShort(top.k)+' history',a:'mktjump',p:top.k});
+    let worst=0,dd=0,back=0;sh.forEach(x=>{const w=x.sh/100;worst+=w*worstFall(x.k);dd+=w*Math.min(0,fundDD(x.k).dd);back=Math.max(back,longestBack(x.k)||0)});
+    out.push({i:'trenddown',t:'How a fall could look',st:'info',hl:`Worst past fall of a mix like yours: about ${Math.abs(Math.round(worst))}%`,b:`Today your mix sits about ${Math.abs(Math.round(dd))}% below its latest peak. After the deepest past falls, funds took up to ${back} months to regain their earlier peak.`,why:'Rough estimate: each fund\'s worst past fall, weighted by its share of your value. Real falls hit funds at different times.',btn:'Replay a past fall',a:'simtab',p:'replay'});
+  }
+  const paused=act.filter(s=>s.pauseLeft>0).length,canc=d.sips.filter(s=>s.status==='cancelled').length,done=d.sips.reduce((a,s)=>a+s.done,0);
+  out.push({i:'cal',t:'SIP consistency',st:(paused||canc)?'watch':'good',hl:`${act.length-paused} of ${d.sips.length} SIPs are running`,b:`${done} installments completed so far${paused?', '+paused+' paused':''}${canc?', '+canc+' cancelled':''}.`,why:'The past-window results assume steady contributions through falls. A paused or cancelled SIP changes them.',btn:'Open My SIPs',a:'view',p:'sips'});
+  return out;
+}
+function viewHealth(){
+  const checks=healthChecks(),sh=fundShares(),scored=checks.filter(c=>c.st!=='info'),good=scored.filter(c=>c.st==='good').length;
+  const lab={good:['g','On track'],watch:['w','Watch'],risk:['r','Behind'],info:['n','Context']};
+  return `<div class="pagehd"><div><h1 class="greet">Portfolio health</h1><p class="sub">Plain checks on your SIPs and goals. Each one says why it matters.</p></div><span class="badge w">Prototype series</span></div>
+  <div class="cols3" style="margin-bottom:18px"><div class="stat"><div class="l">Checks on track</div><div class="v">${good} of ${scored.length}</div></div><div class="stat"><div class="l">Total corpus</div><div class="v">${money(corpus())}</div></div><div class="stat"><div class="l">Monthly SIPs</div><div class="v">${money(monthlyTot())}</div></div></div>
+  <div style="display:grid;gap:12px">${checks.map(c=>`<div class="chk2"><span class="ci">${ic(c.i)}</span><div><h3>${esc(c.t)} <span class="badge ${lab[c.st][0]}" style="vertical-align:middle;margin-left:6px">${lab[c.st][1]}</span></h3><div class="hl">${esc(c.hl)}</div><p>${esc(c.b)}</p><div class="why">Why it matters: ${esc(c.why)}</div></div><div class="go"><button class="btn soft sm" data-a="${c.a}" data-p="${esc(c.p)}">${esc(c.btn)}</button></div></div>`).join('')}</div>
+  <section class="card" style="margin-top:18px"><h3>Where your money sits</h3><div class="hint" style="margin:0 0 12px">Share of current value by fund, running SIPs only.</div><div class="bars">${sh.map(x=>`<div class="hb"><span>${fundShort(x.k)}</span><div class="b"><div style="width:${x.sh}%"></div></div><b>${Math.round(x.sh)}%</b></div>`).join('')||'<div class="empty">No running SIPs.</div>'}</div></section>
+  <div class="callout" style="margin-top:18px">On track means 70% or more of past windows reached the goal. Watch is 40 to 69%. Behind is under 40%. These bands are a prototype choice. Checkpoint shares information based on your data and past market behaviour. It is not investment advice.</div>`;
+}
+
+/* ---- Simulate ---- */
+function simCtx(){
+  const sim=S.sim,sips=S.d.sips.filter(s=>s.status!=='cancelled');
+  const sip=sips.find(s=>s.id===sim.sipId)||sips[0];if(!sip)return null;sim.sipId=sip.id;
+  const goal=S.d.goals.find(g=>g.id===sip.goalId)||null;let linked,H,target;
+  if(goal){linked=S.d.sips.filter(s=>s.goalId===goal.id&&s.status!=='cancelled');if(!linked.some(s=>s.id===sip.id))linked.push(sip);H=monthsTo(goal.date);target=goal.target}
+  else{linked=[sip];H=sim.years*12;target=null}
+  const rangeOnly=target==null||H<12;
+  return {sip,goal,linked,H,target:rangeOnly?null:target,rangeOnly,noGoal:!goal};
+}
+const simKey=()=>{const s=S.sim;return s.type==='pause'?'pause_'+s.k:s.type==='reduce'?'reduce_'+s.pct:s.type==='cancel'?'stop':'keep'};
+const simLabel=()=>{const s=S.sim;return s.type==='pause'?`the ${s.k} month pause`:s.type==='reduce'?`the ${s.pct}% reduction`:s.type==='cancel'?'the cancellation':'no change'};
+function simDyn(c){
+  const s=S.sim,key=simKey(),keep=twoFutures(c.linked,c.sip.id,'keep',c.H,c.target,S.flags),act=key==='keep'?keep:twoFutures(c.linked,c.sip.id,key,c.H,c.target,S.flags),lab=simLabel();
+  S.chartCtx={keep,act,H:c.H};
+  const head=s.type==='keep'?'Nothing changes. This is your plan as it stands.':effectLine(keep,act,c,false);
+  return `<p class="headline" style="margin-top:6px">${esc(head)}</p><div style="max-width:820px;margin:0 auto">${chartTwo(keep,act,c.target,c.H,!c.rangeOnly)}</div>
+  <div class="legend2"><span><i style="background:var(--ink)"></i>Keep this SIP</span><span><i style="background:var(--accent)"></i>After ${esc(lab)}</span>${c.rangeOnly?'':'<span><i style="background:var(--good)"></i>Goal</span>'}<span style="color:var(--ink3)">Line is the middle case. Shading is the middle 80% of past outcomes.</span></div>
+  <div class="futures"><div class="fu"><div class="t">Keep this SIP</div><div class="v">${lakhTxt(keep.p50)}</div><div class="r">Range ${lakhTxt(keep.p10)} to ${lakhTxt(keep.p90)}${c.rangeOnly?'':'<br>'+Math.round(keep.pctReach)+'% of past windows reach the goal'}</div></div>
+  <div class="fu after"><div class="t">After ${esc(lab)}</div><div class="v">${lakhTxt(act.p50)}</div><div class="r">Range ${lakhTxt(act.p10)} to ${lakhTxt(act.p90)}${c.rangeOnly?'':'<br>'+Math.round(act.pctReach)+'% of past windows reach the goal'}</div></div></div>
+  ${keep.proxyUsed?'<div class="callout warn"><b>Category proxy used.</b> This fund has a short history, so the index fund history stands in for it.</div>':''}
+  <details class="callout" style="margin:8px 0 0"><summary style="cursor:pointer;font-weight:600">Show the math</summary><p style="margin:8px 0 0">We replayed ${keep.nWindows} past start dates of ${c.linked.length>1?'your funds':FUNDS[c.sip.fundKey].label}, from ${keep.firstDate} to ${keep.lastDate}, adding each SIP every month for ${c.H} months. ${c.rangeOnly?'No target is used, so the result is a corpus range.':'The goal is '+lakhTxt(c.target)+'.'} No taxes or exit loads are modelled. Past behaviour does not predict future returns.</p></details>`;
+}
+function simSlider(c){
+  const s=S.sim;let h='';
+  if(c.noGoal)h+=`<div class="slidewrap"><div class="top"><span>Time horizon</span><b id="simylbl">${plural(s.years,'year')}</b></div><input type="range" min="1" max="10" value="${s.years}" data-in="simyears" aria-label="Time horizon in years"></div>`;
+  if(s.type==='pause')h+=`<div class="slidewrap"><div class="top"><span>Pause length</span><b id="simlbl">${plural(s.k,'month')}</b></div><input type="range" min="1" max="6" step="1" value="${s.k}" data-in="simslider" aria-label="Pause length in months"></div>`;
+  if(s.type==='reduce')h+=`<div class="slidewrap"><div class="top"><span>Reduction</span><b id="simlbl">${s.pct}% (${inr(c.sip.amount*(1-s.pct/100))} a month)</b></div><input type="range" min="5" max="75" step="5" value="${s.pct}" data-in="simslider" aria-label="Reduction percentage"></div>`;
+  return h;
+}
+function simWhat(){
+  const c=simCtx(),s=S.sim;
+  if(!c)return `<div class="card empty">You have no running SIPs to try a change on.</div>`;
+  const act=S.d.sips.filter(x=>x.status!=='cancelled');
+  return `<section class="card"><div class="cols2" style="gap:14px"><label class="field"><span>SIP</span><select data-in="simsip">${act.map(x=>`<option value="${x.id}" ${x.id===c.sip.id?'selected':''}>${FUNDS[x.fundKey].label}, ${money(x.amount)} a month</option>`).join('')}</select></label>
+  <div class="field"><span>Change</span><div class="seg2">${[['pause','Pause'],['reduce','Reduce'],['cancel','Cancel'],['keep','Keep']].map(([k,l])=>`<button class="${s.type===k?'on':''}" data-a="simtype" data-p="${k}">${l}</button>`).join('')}</div></div></div>
+  <div id="simslot">${simSlider(c)}</div><div id="simdyn">${simDyn(c)}</div></section>`;
+}
+const replayEps=fk=>episodesFor(fk).eps.filter(e=>e.size<=-15).sort((a,b)=>parseM(a.peak)-parseM(b.peak));
+function replayCalc(fk,ep,amt,stopAfter){
+  const nav=SERIES[fk],pk=parseM(ep.peak),s0=Math.max(0,pk-12),len=Math.min(72,nav.length-1-s0),stopT=pk+stopAfter-s0;
+  const run=fn=>{let u=0,inv=0;const line=[];for(let t=0;t<len;t++){const c=fn(t);u+=c/nav[s0+t];inv+=c;line.push(u*nav[s0+t+1])}return {line,inv,end:line[len-1]}};
+  return {len,s0,stopT,pk,keep:run(()=>amt),pause:run(t=>(t>=stopT&&t<stopT+6)?0:amt),stop:run(t=>t>=stopT?0:amt)};
+}
+function chartLines(R,ep){
+  const W=720,Ht=300,pl=54,pr=14,pt=14,pb=30,L=R.len,yMax=(Math.max(...R.keep.line,...R.pause.line,...R.stop.line)*1.06)||1;
+  const X=t=>pl+(W-pl-pr)*t/Math.max(1,L-1),Y=v=>pt+(Ht-pt-pb)*(1-v/yMax);
+  let g='';const step=niceStep(yMax/4);
+  for(let v=0;v<=yMax;v+=step)g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="${v===0?'':'3 4'}"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end">${v===0?'0':fmtL(v)}</text>`;
+  let xl='';for(let t=0;t<L;t+=12)xl+=`<text x="${X(t)}" y="${Ht-8}" text-anchor="middle">${monthAt(R.s0+t).y}</text>`;
+  const path=(a,col,w,dash)=>{let p='';a.forEach((v,t)=>p+=(t?'L':'M')+X(t).toFixed(1)+' '+Y(v).toFixed(1));return `<path d="${p}" fill="none" stroke="${col}" stroke-width="${w}" ${dash?'stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`};
+  const mk=(t,txt,col,row)=>(t>=0&&t<L)?`<line x1="${X(t)}" x2="${X(t)}" y1="${pt}" y2="${Ht-pb}" stroke="${col}" stroke-dasharray="3 4"/><text x="${X(t)+4}" y="${pt+10+row*14}" style="fill:${col};font-size:10px">${txt}</text>`:'';
+  return `<svg viewBox="0 0 ${W} ${Ht}" width="100%" role="img" aria-label="Replay of a past fall: value of a SIP for three behaviours">${g}${xl}${mk(R.pk-R.s0,'Peak','var(--ink3)',0)}${mk(R.stopT,'Stops','var(--accent)',1)}${mk(parseM(ep.trough)-R.s0,'Low','var(--ink3)',0)}${path(R.stop.line,'var(--ink3)',2.2,'5 4')}${path(R.pause.line,'var(--accent)',2.4)}${path(R.keep.line,'var(--ink)',2.6)}</svg>`;
+}
+function repDyn(){
+  const s=S.sim,fk=s.fund,eps=replayEps(fk);
+  if(!eps.length)return '<div class="empty">No fall of 15% or more in this history.</div>';
+  const ep=eps[Math.min(s.fall,eps.length-1)],R=replayCalc(fk,ep,s.amt,3),end=monthLabel(monthAt(R.s0+R.len)),start=monthLabel(monthAt(R.s0));
+  const rows=[['Kept investing',R.keep,'var(--ink)'],['Paused 6 months',R.pause,'var(--accent)'],['Stopped for good',R.stop,'var(--ink3)']];
+  const gain=x=>x.end-x.inv,gk=gain(R.keep),gp=gain(R.pause),gs=gain(R.stop);
+  const cmp=d=>d>=0?money(d)+' less':money(-d)+' more';
+  return `<p class="headline" style="margin-top:6px">Pausing for 6 months left a gain of ${money(gp)}. Staying in left ${money(gk)}.</p>
+  <p class="reach" style="margin:0 0 8px;color:var(--ink2)">Starting ${start}, investing ${inr(s.amt)} a month for ${R.len} months to ${end}. The pause and the stop begin 3 months after the ${ep.peak} peak, once the fall is visible.</p>
+  <div class="tfchart" style="max-width:820px;margin:0 auto">${chartLines(R,ep)}</div>
+  <div class="legend2"><span><i style="background:var(--ink)"></i>Kept investing</span><span><i style="background:var(--accent)"></i>Paused 6 months</span><span><i style="background:var(--ink3)"></i>Stopped for good</span></div>
+  <div class="tablewrap" style="margin-top:10px"><table style="min-width:0"><thead><tr><th>Behaviour</th><th>Put in</th><th>Value at end</th><th>Gain</th></tr></thead><tbody>${rows.map(([l,r,c])=>`<tr><td><span class="dot2" style="background:${c}"></span>${l}</td><td>${money(r.inv)}</td><td>${money(r.end)}</td><td>${money(gain(r))}</td></tr>`).join('')}</tbody></table></div>
+  <div class="callout" style="margin-top:12px">Compared with staying in, the 6 month pause ended with a gain ${cmp(gk-gp)}, and stopping for good ended ${cmp(gk-gs)}. Stopping also put in ${money(R.keep.inv-R.stop.inv)} less. ${ep.months!=null?`This fund took ${ep.months} months to regain its ${ep.peak} peak.`:'This fund had not regained its peak by the end of the data.'}</div>
+  <p class="disc" style="color:var(--ink3);font-size:11.5px;margin:10px 0 0">One historical episode, replayed on the prototype series. Past behaviour does not predict future returns.</p>`;
+}
+function simReplay(){
+  const s=S.sim,fk=s.fund,eps=replayEps(fk);if(s.fall>=eps.length)s.fall=0;
+  return `<section class="card"><div class="cols2" style="gap:14px"><div class="field"><span>Fund history</span><div class="seg2">${['index','flexi','mid'].map(k=>`<button class="${fk===k?'on':''}" data-a="repfund" data-p="${k}">${fundShort(k)}</button>`).join('')}</div></div>
+  <label class="field"><span>Monthly SIP (₹)</span><input type="number" inputmode="numeric" min="500" max="500000" step="500" value="${s.amt}" data-in="repamt"></label></div>
+  <div class="field"><span>Which fall</span><div class="chips">${eps.map((e,i)=>`<button class="chip ${s.fall===i?'on':''}" data-a="repfall" data-p="${i}">${e.peak} to ${e.trough}, ${e.size.toFixed(0)}%</button>`).join('')}</div></div>
+  <div id="repdyn">${repDyn()}</div></section>`;
+}
+function viewSim(){
+  const tab=S.sim.tab;
+  return `<div class="pagehd"><div><h1 class="greet">Simulate</h1><p class="sub">Try a change before you make it, or replay how a past fall played out. Nothing here changes your SIPs.</p></div><div class="tabs"><button data-a="simtab" data-p="what" class="${tab==='what'?'on':''}">What if</button><button data-a="simtab" data-p="replay" class="${tab==='replay'?'on':''}">Replay a fall</button></div></div>${tab==='what'?simWhat():simReplay()}`;
+}
+
+/* ---- How it works ---- */
+function askBase(){
+  const d=S.d;
+  for(const g of d.goals){const linked=d.sips.filter(s=>s.goalId===g.id&&s.status!=='cancelled'),H=monthsTo(g.date);if(linked.length&&H>=12)return {g,linked,sip:linked.slice().sort((a,b)=>b.amount-a.amount)[0],H,target:g.target}}
+  const sip=d.sips.filter(s=>s.status!=='cancelled')[0];
+  return sip?{g:null,linked:[sip],sip,H:60,target:null}:null;
+}
+function askEffect(b,key){
+  const keep=twoFutures(b.linked,null,'keep',b.H,b.target,S.flags),act=twoFutures(b.linked,b.sip.id,key,b.H,b.target,S.flags);
+  return b.target!=null?`reach on ${b.g.name} moves from ${Math.round(keep.pctReach)}% to ${Math.round(act.pctReach)}% of past windows`:`the typical result after 5 years moves from ${lakhTxt(keep.p50)} to ${lakhTxt(act.p50)}`;
+}
+const ASKQ=['Why does a pause move my goal date?','Why a range and not one number?','How much history is behind this?','What if I only skip one month?','What does Checkpoint never do?','Where do the numbers come from?'];
+function askAnswer(i){
+  const b=askBase();
+  if(i===4)return ['It never recommends a fund, a trade or a time to invest.','It never forecasts the market or promises a return.','It never blocks, delays or times your decision. You can proceed within two taps.','It never changes a SIP until you confirm.','It never writes free-form advice. Every sentence comes from a fixed template and passes a filter first.'].map(x=>`<p style="margin:6px 0">${x}</p>`).join('');
+  if(i===5)return `<p style="margin:6px 0">The two futures come from a replay of past monthly prices of your funds, run in your browser when you ask.</p><p style="margin:6px 0">In this prototype the price series is a stand-in anchored to calendar-year Nifty 50 returns from ${FIRST_NAV_LABEL} to ${LAST_NAV_LABEL}. The real product reads AMFI NAV for the partner's funds. Fund names here are masked.</p>`;
+  if(!b)return '<p style="margin:6px 0">Add a running SIP to see this answer with your own numbers.</p>';
+  try{
+    const name=FUNDS[b.sip.fundKey].label,keep=twoFutures(b.linked,null,'keep',b.H,b.target,S.flags);
+    if(i===0)return `<p style="margin:6px 0">A 3 month pause on your ${name} SIP skips ${inr(3*b.sip.amount)} of contributions. Those months also miss the growth that follows, so the gap keeps widening until the goal date.</p><p style="margin:6px 0">In past windows, ${askEffect(b,'pause_3')}.</p>`;
+    if(i===1)return `<p style="margin:6px 0">Outcomes depend on when you start. Across ${keep.nWindows} past start dates, the lower end ended near ${lakhTxt(keep.p10)}, the middle near ${lakhTxt(keep.p50)} and the upper end near ${lakhTxt(keep.p90)}.</p><p style="margin:6px 0">One number would hide that spread, so Checkpoint shows the range and marks the middle case.</p>`;
+    if(i===2)return `<p style="margin:6px 0">${keep.nWindows} start dates, from ${keep.firstDate} to ${keep.lastDate}.</p><p style="margin:6px 0">The windows overlap, so they are not independent samples. Funds with fewer than ${MIN_WINDOWS} start dates use the index history as a proxy, and Checkpoint says so on screen.</p>`;
+    if(i===3)return `<p style="margin:6px 0">Skipping one installment of your ${name} SIP removes ${inr(b.sip.amount)} of contributions once.</p><p style="margin:6px 0">In past windows, ${askEffect(b,'pause_1')}.</p>`;
+  }catch(e){return '<p style="margin:6px 0">The numbers are not available right now.</p>'}
+  return '';
+}
+function viewHow(){
+  const rep=filterReport(),ev=S.events,c=n=>ev.filter(e=>e.name===n).length,b=askBase();let win='None yet';
+  try{if(b)win=String(twoFutures(b.linked,null,'keep',b.H,b.target,S.flags).nWindows)}catch(e){}
+  const steps=[['Trigger','You tap Pause, Skip, Reduce or Cancel in Modify SIP. Checkpoint opens before the change is final.'],['Context','It reads your SIPs, the goal they feed, the time left and the fund price history.'],['Compute','It replays every past start date and reads off the low, middle and high outcomes.'],['Explain','Sentences come from fixed templates. A filter blocks advice, raw digits and unknown slots.'],['Decide','You choose Keep, a smaller option or Proceed. All three carry equal weight.']];
+  const off=S.flags.killSwitch||S.userOff;
+  return `<div class="pagehd"><div><h1 class="greet">How it works</h1><p class="sub">The reasoning behind every Checkpoint screen, and the limits it keeps.</p></div></div>
+  <section class="card"><h3 style="margin-bottom:12px">Five steps, in order</h3><div class="pipe">${steps.map(([t,d],i)=>`<div class="st"><div class="n">${i+1}</div><b>${t}</b><p>${d}</p></div>`).join('')}</div></section>
+  <div class="cols2" style="margin-top:18px">
+   <section class="card"><h3>Ask why</h3><div class="hint" style="margin:0 0 10px">Answers use your own SIPs and goals. There is no free typing, so nothing is improvised.</div>
+    <div class="chips" style="margin-bottom:12px">${ASKQ.map((q,i)=>`<button class="chip ${S.ask===i?'on':''}" data-a="ask" data-p="${i}">${q}</button>`).join('')}</div>
+    <div class="callout" id="askans" style="margin:0">${askAnswer(S.ask)}</div></section>
+   <section class="card"><h3>Guardrails, live</h3>
+    <div class="row"><div><b>Advice filter</b><div class="d">${rep.total} templates checked, ${rep.fails} violations shipped. Fallback text shown ${c('error_fallback')} times this session.</div></div><span class="badge ${rep.fails?'r':'g'}">${rep.fails?'Review':'Passing'}</span></div>
+    <div class="row"><div><b>Checkpoint switch</b><div class="d">${off?'Off. Users see a plain confirm screen.':'On. Users can turn it off in Controls.'}</div></div><span class="badge ${off?'w':'g'}">${off?'Off':'On'}</span></div>
+    <div class="row"><div><b>Proceed within two taps</b><div class="d">Every step has a Proceed link. No timers, no lockouts.</div></div><span class="badge g">Always</span></div>
+    <div class="row"><div><b>Past windows behind your main goal</b><div class="d">Start dates replayed for the goal on Overview.</div></div><b>${win}</b></div>
+    <div class="row"><div><b>Checkpoint sessions this session</b><div class="d">Counted from the event log on Insights.</div></div><b>${c('checkpoint_triggered')}</b></div></section></div>
+  <div class="callout" style="margin-top:18px">Checkpoint shares information based on your data and past market behaviour. It is not investment advice and does not recommend any product. You decide.</div>`;
+}
+
+function sipRow(s){
+  const st=statusOf(s),g=S.d.goals.find(x=>x.id===s.goalId),bad=S.flags.failedDebit&&s.id===S.d.attempt.sipId;
+  return `<div class="card" style="display:grid;grid-template-columns:1.6fr repeat(3,1fr) auto;gap:14px;align-items:center;margin-bottom:12px" data-row="sip">
+   <div><b>${FUNDS[s.fundKey].label}</b><div class="hint">${s.status==='cancelled'?'No debits':money(s.amount)+' a month'}</div></div>
+   <div><div class="hint" style="margin:0">Next debit</div><b>${s.status==='cancelled'?'None':fmtDate(s.nextDebit)}</b>${bad?'<div class="badge r" style="margin-top:4px">Last debit failed</div>':''}</div>
+   <div><div class="hint" style="margin:0">Installments</div><b>${s.done} of ${s.tenure}</b></div>
+   <div><div class="hint" style="margin:0">Goal</div><b>${g?esc(g.name):'No goal tagged'}</b><div class="st ${st.c}" style="font-size:12px;font-weight:500">${st.t}</div></div>
+   <div style="display:flex;gap:8px"><button class="btn soft sm" data-a="sip" data-p="${s.id}">Open</button>${s.status==='cancelled'?`<button class="btn dark sm" data-a="restart" data-p="${s.id}">Restart</button>`:`<button class="btn dark sm" data-a="modify" data-p="${s.id}">Modify SIP</button>`}</div></div>`;
+}
+function viewSips(){
+  const r=S.d.sips.filter(s=>S.sipFilter==='all'||(S.sipFilter==='active'&&s.status!=='cancelled'&&!s.pauseLeft)||(S.sipFilter==='paused'&&s.pauseLeft>0)||(S.sipFilter==='cancelled'&&s.status==='cancelled'));
+  return `<div class="pagehd"><div><h1 class="greet">My SIPs</h1><p class="sub">Every SIP you can modify. Tap Modify SIP to try a change.</p></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn dark sm" data-a="modal" data-p="addsip">${ic('plus')} Add SIP</button><div class="tabs">${['all','active','paused','cancelled'].map(k=>`<button data-a="sipf" data-p="${k}" class="${S.sipFilter===k?'on':''}">${cap(k)}</button>`).join('')}</div></div></div>
+  ${r.length?r.map(sipRow).join(''):`<div class="card empty">No SIPs in this view.</div>`}`;
+}
+function viewSip(){
+  const s=getSip(S.arg);if(!s){S.view='sips';return viewSips()}
+  const st=statusOf(s),g=S.d.goals.find(x=>x.id===s.goalId);
+  return `<div style="margin-bottom:8px"><button class="btn soft sm" data-a="view" data-p="sips">${ic('back')} My SIPs</button></div>
+  <div class="pagehd"><div><h1 class="greet">${FUNDS[s.fundKey].label}</h1><p class="sub"><span class="badge ${st.c==='ok'?'g':st.c==='pa'?'w':'r'}">${st.t}</span> ${g?'<span class="tag o">'+esc(g.name)+'</span>':'<span class="tag">No goal tagged</span>'}</p></div>
+   ${s.status==='cancelled'?`<button class="btn dark" data-a="restart" data-p="${s.id}">Restart SIP</button>`:`<button class="btn dark" data-a="modify" data-p="${s.id}">${ic('sliders')} Modify SIP</button>`}</div>
+  <div class="cols2" style="grid-template-columns:1.1fr .9fr">
+   <section class="card"><div class="hd"><h3>NAV history</h3><div class="tabs">${['1Y','3Y','5Y','All'].map(k=>`<button data-a="navr" data-p="${k}" class="${S.navRange===k?'on':''}">${k}</button>`).join('')}</div></div><div class="hint" style="margin:-8px 0 8px">Indexed to 100 at the start of the range. Prototype series.</div>${sparkline(s.fundKey,S.navRange)}</section>
+   <section class="card"><h3 style="margin-bottom:12px">Details</h3><div class="kv">
+     <div class="stat"><div class="l">Invested</div><div class="v">${money(s.invested)}</div></div>
+     <div class="stat"><div class="l">Current value</div><div class="v">${money(sipVal(s))}</div></div>
+     <div class="stat"><div class="l">XIRR</div><div class="v">${s.xirr}%</div></div>
+     <div class="stat"><div class="l">Monthly amount</div><div class="v">${s.status==='cancelled'?'None':money(s.amount)}</div></div>
+     <div class="stat"><div class="l">Next debit</div><div class="v">${s.status==='cancelled'?'None':fmtDate(s.nextDebit)}</div></div>
+     <div class="stat"><div class="l">Tenure</div><div class="v">${s.done} of ${s.tenure}</div></div></div>
+     <label class="field" style="margin-top:16px"><span>Goal tag</span><select data-in="sipgoal" data-p="${s.id}"><option value="">No goal tagged</option>${S.d.goals.map(x=>`<option value="${x.id}" ${x.id===s.goalId?'selected':''}>${esc(x.name)}</option>`).join('')}</select></label></section>
+  </div>
+  <div style="margin-top:18px">${(()=>{const keep=S.actQuery;return ''})()}<section class="card"><div class="hd"><h3>Activity for this SIP</h3></div><div class="tablewrap"><table><thead><tr><th>Ref ID</th><th>Activity</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>${S.d.activities.filter(x=>x.sip===s.id).map(x=>`<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${money(x.amount)}</td><td>${x.status}</td><td>${stamp(x.date)}</td></tr>`).join('')||'<tr><td colspan="5"><div class="empty">No activity yet.</div></td></tr>'}</tbody></table></div></section></div>`;
+}
+function goalStatus(g){
+  const linked=S.d.sips.filter(s=>s.goalId===g.id);if(!linked.length)return null;
+  const H=monthsTo(g.date);if(H<12)return {short:true};
+  try{const r=twoFutures(linked,null,'keep',H,g.target,S.flags);return {reach:r.pctReach,n:r.nWindows,p50:r.p50}}catch(e){return null}
+}
+function viewGoals(){
+  const gs=S.d.goals;
+  return `<div class="pagehd"><div><h1 class="greet">Goals</h1><p class="sub">Tag SIPs to a goal so Checkpoint can measure a change against it.</p></div><button class="btn dark" data-a="modal" data-p="goalnew">${ic('plus')} Add goal</button></div>
+  ${gs.length?gs.map(g=>{const linked=S.d.sips.filter(s=>s.goalId===g.id),saved=linked.reduce((a,s)=>a+sipVal(s),0),st=goalStatus(g);
+   return `<section class="card" style="margin-bottom:14px"><div class="hd"><div><h3>${esc(g.name)}</h3><div class="hint">${money(g.target)} by ${goalLabel(g.date)}</div></div><div style="display:flex;gap:8px"><button class="btn soft sm" data-a="modal" data-p="goaledit:${g.id}">Edit</button><button class="btn line sm" data-a="modal" data-p="goaldel:${g.id}">Delete</button></div></div>
+   <div class="bar"><div style="width:${Math.min(100,saved/g.target*100)}%"></div></div><div class="barfoot"><span><b>${money(saved)}</b> saved</span><span>${Math.round(saved/g.target*100)}% of target</span></div>
+   <div class="cols2" style="margin-top:16px"><div class="stat"><div class="l">Linked SIPs</div><div class="v" style="font-size:16px">${linked.length?linked.map(s=>FUNDS[s.fundKey].label.replace('Sample ','')).join(', '):'None linked yet'}</div></div>
+   <div class="stat"><div class="l">On the current plan</div><div class="v" style="font-size:16px">${!st?'Link a SIP to see this':st.short?'Under 12 months: wide range':`${Math.round(st.reach)}% of ${st.n} past windows reach it`}</div></div></div></section>`}).join(''):`<div class="card empty"><p>You have no goals yet.</p><button class="btn dark" data-a="modal" data-p="goalnew">${ic('plus')} Add your first goal</button></div>`}`;
+}
+function viewActivity(){
+  return `<div class="pagehd"><div><h1 class="greet">Activity</h1><p class="sub">Debits, allotments and every Checkpoint decision.</p></div><div class="tabs"><button data-a="acttab" data-p="all" class="${S.actTab==='all'?'on':''}">All activity</button><button data-a="acttab" data-p="cp" class="${S.actTab==='cp'?'on':''}">Decision log</button></div></div>
+  ${S.actTab==='cp'?viewDecisions():''}${actCard(null,S.actTab==='cp'?'Checkpoint entries':'All activity')}`;
+}
+function viewDecisions(){
+  const ds=S.d.decisions;
+  if(!ds.length)return `<div class="card" style="margin-bottom:18px"><h3>No decisions yet</h3><p class="hint">Change a SIP from My SIPs. Each Checkpoint decision and the note you leave appears here.</p><button class="btn dark sm" style="margin-top:12px" data-a="view" data-p="sips">Go to My SIPs</button></div>`;
+  return `<div style="display:grid;gap:12px;margin-bottom:18px">${ds.slice().reverse().map(x=>`<section class="card"><div class="hd" style="margin-bottom:8px"><div><h3>${esc(x.title)}</h3><div class="hint">${x.when} · reason: ${esc(x.reasonLabel)}</div></div><span class="badge ${x.choice==='keep'?'g':x.choice==='smaller'?'w':'n'}">${x.choice==='keep'?'Kept SIP':x.choice==='smaller'?'Smaller option':'Proceeded'}</span></div>
+   ${x.keepPct!=null?`<div class="hint">Keep: ${x.keepPct}% of past windows reach the goal. After: ${x.actPct}%.</div>`:''}${x.note?`<div class="callout" style="margin-bottom:0">Note to future you: ${esc(x.note)}</div>`:''}</section>`).join('')}</div>`;
+}
+function viewInsights(){
+  const ev=S.events,c=n=>ev.filter(e=>e.name===n).length,dec=ev.filter(e=>e.name==='decision_made');
+  const rep=filterReport(),bar=(l,v,max,dk)=>`<div class="hb"><span>${l}</span><div class="b ${dk?'dk':''}"><div style="width:${Math.min(100,v/max*100)}%"></div></div><b>${typeof v==='number'&&max===100?v+'%':v.toLocaleString('en-IN')}</b></div>`;
+  const tms=dec.map(e=>e.total_ms).filter(Boolean).sort((a,b)=>a-b),med=tms.length?Math.round(tms[Math.floor(tms.length/2)]/1000)+' s':'None yet';
+  const csv=['time,event,persona,detail'].concat(ev.map(e=>{const {t,name,persona,...r}=e;return [t,name,persona,'"'+JSON.stringify(r).replace(/"/g,"'")+'"'].join(',')})).join('\n');
+  return `<div class="pagehd"><div><h1 class="greet">Insights</h1><p class="sub">What fund history shows, then the partner view: how Checkpoint performs and whether it stays out of the way.</p></div><span class="badge w">Sample cohort plus your live session</span></div>
+  ${marketCard()}
+  <h3 style="margin:6px 0 12px;font-size:17px">Checkpoint performance</h3>
+  <div class="cols3" style="margin-bottom:18px">
+   <div class="stat"><div class="l">North Star: 90-day informed retention</div><div class="v">68%</div><div class="hint">Sample. Holdout group: 54%</div></div>
+   <div class="stat"><div class="l">Stop anyway in two taps or fewer</div><div class="v">100%</div><div class="hint">Guardrail. Live: ${dec.length?dec.filter(e=>e.taps<=2||e.choice!=='proceed').length+' of '+dec.length+' sessions':'no sessions yet'}</div></div>
+   <div class="stat"><div class="l">Median time in Checkpoint</div><div class="v">${med}</div><div class="hint">Target: 20 to 40 seconds</div></div></div>
+  <div class="cols2">
+   <section class="card"><h3>Funnel</h3><div class="hint" style="margin-bottom:14px">Sample cohort of 10,000 modify-SIP attempts. Layout only, not a result.</div><div class="bars">${bar('Checkpoint triggered',10000,10000)}${bar('Viewed Two Futures',7900,10000)}${bar('Chose keep',2610,10000,1)}${bar('Chose a smaller option',1840,10000,1)}${bar('Proceeded with original',3450,10000,1)}</div></section>
+   <section class="card"><h3>Reason mix</h3><div class="hint" style="margin-bottom:14px">Sample cohort. Share of attempts by reason.</div><div class="bars">${bar('Market is falling',46,100)}${bar('Need cash now',27,100)}${bar('Doubt this fund',11,100)}${bar('Just checking',10,100)}${bar('Goal changed',6,100)}</div></section>
+   <section class="card"><h3>This session</h3><div class="hint" style="margin-bottom:14px">Live counts from what you did in this prototype.</div><div class="bars">${bar('Checkpoint triggered',c('checkpoint_triggered'),Math.max(1,c('checkpoint_triggered')))}${bar('Viewed Two Futures',c('two_futures_viewed'),Math.max(1,c('checkpoint_triggered')))}${bar('Opened Show the math',c('math_opened'),Math.max(1,c('checkpoint_triggered')))}${bar('Decisions made',c('decision_made'),Math.max(1,c('checkpoint_triggered')))}${bar('Fallbacks shown',c('error_fallback'),Math.max(1,c('checkpoint_triggered')))}</div></section>
+   <section class="card"><h3>Narration guardrail</h3><div class="hint" style="margin-bottom:12px">The filter runs on every narration template when the page loads.</div>
+     <div class="kv"><div class="stat"><div class="l">Templates checked</div><div class="v">${rep.total}</div></div><div class="stat"><div class="l">Violations shipped</div><div class="v">${rep.fails}</div></div></div>
+     <div class="callout">A deliberately bad sentence is rejected for: ${rep.sampleReasons.map(esc).join('; ')}. Use the demo panel to inject it and watch the fallback text appear.</div></section>
+  </div>
+  <section class="card" style="margin-top:18px"><div class="hd"><div><h3>Event log</h3><div class="hint">${ev.length} events in this session</div></div><button class="btn soft sm" data-a="copycsv">${ic('copy')} Copy as CSV</button></div>
+   <div class="tablewrap" style="max-height:320px"><table><thead><tr><th>Time</th><th>Event</th><th>Detail</th></tr></thead><tbody>${ev.length?ev.slice().reverse().map(e=>{const {t,name,persona,...r}=e;return `<tr><td>${t}</td><td><b>${name}</b></td><td style="white-space:normal;color:var(--ink2)">${esc(Object.entries(r).map(([k,v])=>k+': '+v).join(', '))}</td></tr>`}).join(''):'<tr><td colspan="3"><div class="empty">No events yet. Start a SIP change to generate some.</div></td></tr>'}</tbody></table></div><textarea id="csvbox" class="sr" readonly>${esc(csv)}</textarea></section>`;
+}
+function sw(on,a,p){return `<button class="switch ${on?'on':''}" role="switch" aria-checked="${on}" data-a="${a}" ${p?'data-p="'+p+'"':''}></button>`}
+function viewSettings(){
+  const on=!(S.userOff||S.flags.killSwitch);
+  return `<div class="pagehd"><div><h1 class="greet">Checkpoint and transparency</h1><p class="sub">What appears when you change a SIP, what it uses, and how to switch it off.</p></div></div>
+  <div class="cols2">
+   <section class="card"><h3>Your controls</h3>
+    <div class="row"><div><b>Show Checkpoint before SIP changes</b><div class="d">${S.flags.killSwitch?'Switched off by the platform for this demo.':'Turn off to get the plain confirm screen instead.'}</div></div>${sw(on,'togglecp')}</div>
+    <div class="row"><div><b>Decision log</b><div class="d">Every Checkpoint decision and note.</div></div><button class="btn soft sm" data-a="logview">Open</button></div></section>
+   <section class="card"><h3>Why you see Checkpoint</h3><p class="hint" style="margin-bottom:12px">When you pause, skip, reduce or cancel a SIP, Checkpoint shows what that change does to your goal before it goes through. It takes about 20 seconds. You can skip it at any point.</p>
+    <h3 style="font-size:14px;margin:14px 0 6px">Data it uses</h3><ul class="hint" style="margin:0;padding-left:18px"><li>Your SIPs, current value and goal targets</li><li>Past NAV history of your funds</li><li>The reason you pick, if you pick one</li></ul>
+    <h3 style="font-size:14px;margin:14px 0 6px">What it never does</h3><ul class="hint" style="margin:0;padding-left:18px"><li>Recommend a fund or a trade</li><li>Forecast the market or promise returns</li><li>Block, delay or time-limit your decision</li><li>Change a SIP without your confirmation</li></ul></section></div>
+  <div class="callout" style="margin-top:18px">Checkpoint shares information based on your data and past market behaviour. It is not investment advice and does not recommend any product. You decide.</div>`;
+}
+function renderView(){
+  switch(S.view){case 'sips':return viewSips();case 'sip':return viewSip();case 'goals':return viewGoals();case 'activity':return viewActivity();case 'insights':return viewInsights();case 'settings':return viewSettings();case 'health':return viewHealth();case 'sim':return viewSim();case 'how':return viewHow();default:return viewOverview()}
+}
+function render(){
+  document.documentElement.dataset.theme=S.theme;
+  const app=$('#app');app.innerHTML=shell(renderView());
+  renderLayer();
+}
+
+/* ===== POPOVERS, MODALS ===== */
+function popHTML(){
+  const p=S.pop;if(!p)return '';
+  const r=p.rect,style=p.type==='tools'?`bottom:${innerHeight-r.top+10}px;right:12px;`:`top:${Math.min(r.bottom+8,innerHeight-60)}px;right:${Math.max(8,innerWidth-r.right)}px;`;
+  let inner='',w=240;
+  if(p.type==='bell'){w=330;inner=`<div class="ttl">Notifications</div>`+notifs().map(n=>`<button class="note" data-a="notif" data-p="${n.a}:${n.p}"><b>${esc(n.t)}</b><span>${esc(n.b)}</span></button>`).join('')}
+  else if(p.type==='user'){w=270;inner=`<div class="ttl">Demo persona</div>`+Object.values(PERSONAS).map(x=>`<button class="it" data-a="persona" data-p="${x.id}"><span class="avatar" style="width:30px;height:30px;font-size:13px">${x.name[0]}</span><span><b style="display:block">${x.name}</b><span style="font-size:12px;color:var(--ink2)">${x.story}</span></span>${S.persona===x.id?ic('check'):''}</button>`).join('')+`<div class="ttl">Account</div><button class="it" data-a="view" data-p="settings">${ic('sliders')} Checkpoint settings</button><button class="it" data-a="modal" data-p="resetask">${ic('refresh')} Reset demo</button>`}
+  else if(p.type==='tools'){inner=`<div class="ttl">Tools</div>`+[['health','Portfolio health','heart'],['sim','Simulate','flask'],['how','How it works','flow'],['settings','Controls','sliders']].map(([k,l,i])=>`<button class="it" data-a="view" data-p="${k}">${ic(i)} ${l}</button>`).join('')+`<button class="it" data-a="dcycle">${ic('trenddown')} Change market mode</button><button class="it" data-a="modal" data-p="help">${ic('help')} Demo guide</button>`}
+  else if(p.type==='filter'){inner=`<div class="ttl">Status</div>`+['all','Completed','Pending','In Progress','Checkpoint'].map(k=>`<button class="it" data-a="actfilter" data-p="${k}">${k==='all'?'All activity':k}${S.actFilter===k?`<span style="margin-left:auto">${ic('check')}</span>`:''}</button>`).join('')}
+  else if(p.type.startsWith('row:')){const id=p.type.slice(4);inner=`<button class="it" data-a="modal" data-p="row:${id}">${ic('eye')} View details</button><button class="it" data-a="copyref" data-p="${id}">${ic('copy')} Copy reference</button>`}
+  return `<div class="pop" role="menu" style="position:fixed;${style}width:${w}px">${inner}</div>`;
+}
+function modalShell(inner,wide){return `<div class="overlay" data-a="scrim"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" tabindex="-1"><button class="x" data-a="closemodal" aria-label="Close">${ic('x')}</button>${inner}</div></div>`}
+const MOD_OPTS=[['pause','Pause','pause','Stop debits for a few months, then restart'],['skip','Skip next installment','skip','Skip one debit and resume on schedule'],['reduce','Reduce amount','reduce','Keep investing a smaller amount'],['cancel','Cancel SIP','cancel','Stop this SIP. Existing units stay invested']];
+function modalHTML(){
+  const m=S.modal;if(!m)return '';
+  if(m.type==='modify'){
+    const sip=getSip(m.sipId),x=m.m,valid=x.type!=='reduce'||(x.amt>=500&&x.amt<sip.amount);
+    return modalShell(`<h2>Modify SIP</h2><p class="lead">${FUNDS[sip.fundKey].label}, ${money(sip.amount)} a month, next debit ${fmtDate(sip.nextDebit)}</p>
+    <div class="opts">${MOD_OPTS.map(([k,l,i,d])=>`<button class="opt ${x.type===k?'on':''}" data-a="mset" data-p="${k}"><span class="oi">${ic(i)}</span><span><b>${l}</b><span class="d">${d}</span></span></button>`).join('')}</div>
+    ${x.type==='pause'?`<div style="margin-top:16px"><div class="hint" style="margin-bottom:8px;color:var(--ink2)">Pause for</div><div class="chips">${[1,2,3,4,5,6].map(k=>`<button class="chip ${x.k===k?'on':''}" data-a="mk" data-p="${k}">${plural(k,'month')}</button>`).join('')}</div><p class="hint" style="margin-top:8px;color:var(--ink2)">Restarts on ${fmtDate(addMonthsISO(sip.nextDebit,x.k))}</p></div>`:''}
+    ${x.type==='reduce'?`<div style="margin-top:16px"><div class="chips" style="margin-bottom:10px">${[25,50,75].map(p=>`<button class="chip ${Math.abs((1-x.amt/sip.amount)*100-p)<1?'on':''}" data-a="mred" data-p="${p}">Reduce ${p}%</button>`).join('')}</div><label class="field"><span>New monthly amount (₹)</span><input type="number" inputmode="numeric" min="500" max="${sip.amount-1}" value="${x.amt}" data-in="mamt"></label>${valid?'':`<div class="callout warn">Enter an amount from ₹500 to ${inr(sip.amount-1)}.</div>`}</div>`:''}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px"><button class="btn soft" data-a="closemodal">Not now</button><button class="btn dark" data-a="mcont" ${valid?'':'disabled'}>Continue</button></div>`);
+  }
+  if(m.type==='plain'){
+    const sip=getSip(m.sipId);
+    return modalShell(`<h2>Confirm change</h2><p class="lead">${esc(describeAction(m.a,sip,'review'))}</p><div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn soft" data-a="closemodal">Cancel</button><button class="btn dark" data-a="plainok">Confirm</button></div>`);
+  }
+  if(m.type==='goal'){
+    const g=m.goal||{name:'',target:1000000,date:'2031-12'},v=g.id?g.date:g.date;
+    return modalShell(`<h2>${g.id?'Edit goal':'Add a goal'}</h2><p class="lead">A goal lets Checkpoint measure a SIP change in rupees and months.</p>
+    <label class="field"><span>Goal name</span><input id="gname" value="${esc(g.name)}" placeholder="For example, Home down payment"></label>
+    <div class="cols2" style="gap:12px"><label class="field"><span>Target amount (₹)</span><input id="gtarget" type="number" inputmode="numeric" min="10000" value="${g.target}"></label><label class="field"><span>Target month</span><input id="gdate" type="month" min="2026-10" value="${v}"></label></div>
+    <div class="field"><span>SIPs that feed this goal</span>${S.d.sips.map(s=>`<label style="display:flex;gap:10px;align-items:center;padding:8px 0"><input type="checkbox" class="gsip" value="${s.id}" ${(m.link||[]).includes(s.id)?'checked':''} style="width:auto;accent-color:var(--accent)"> ${FUNDS[s.fundKey].label}, ${money(s.amount)} a month</label>`).join('')}</div>
+    <div id="gerr" class="callout warn" style="display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px"><button class="btn soft" data-a="closemodal">Cancel</button><button class="btn dark" data-a="goalsave">${g.id?'Save goal':'Add goal'}</button></div>`);
+  }
+  if(m.type==='confirm')return modalShell(`<h2>${esc(m.title)}</h2><p class="lead">${esc(m.body)}</p><div style="display:flex;justify-content:flex-end;gap:10px"><button class="btn soft" data-a="closemodal">Cancel</button><button class="btn dark" data-a="${m.ok}" data-p="${m.okp||''}">${esc(m.okLabel)}</button></div>`);
+  if(m.type==='break'){
+    const t={xirr:'XIRR by SIP',monthly:'Monthly SIPs',invested:'Invested by SIP',value:'Current value by SIP'}[m.arg];
+    return modalShell(`<h2>${t}</h2><p class="lead">${S.mode==='calm'?'Market mode: calm.':'Market mode: '+(S.mode==='fall12'?'fall of about 12%':'sharp fall of about 25%')+'.'}</p><div class="tablewrap"><table style="min-width:0"><thead><tr><th>Fund</th><th>Monthly</th><th>Invested</th><th>Value</th><th>XIRR</th></tr></thead><tbody>${S.d.sips.map(s=>`<tr><td>${FUNDS[s.fundKey].label}</td><td>${s.status==='cancelled'?'None':money(s.pauseLeft?0:s.amount)}</td><td>${money(s.invested)}</td><td>${money(sipVal(s))}</td><td>${s.xirr}%</td></tr>`).join('')}</tbody></table></div>`);
+  }
+  if(m.type==='about')return modalShell(`<h2>About this prototype</h2><p class="lead">FinLit Checkpoint sits inside the modify-SIP flow of a partner app.</p>
+   <div class="row"><div><b>What is real</b><div class="d">Every Two Futures number comes from a rolling-window replay that runs in your browser when you move the slider. Fall and Recovery is computed from the same series. Nothing is precomputed or hard-coded.</div></div></div>
+   <div class="row"><div><b>What is mocked</b><div class="d">The partner app, the three personas, the masked fund names and the NAV series. The series is a prototype stand-in anchored to calendar-year Nifty 50 returns (${FIRST_NAV_LABEL} to ${LAST_NAV_LABEL}). Swap in AMFI NAV for the submission.</div></div></div>
+   <div class="row"><div><b>Disclaimer</b><div class="d">Checkpoint shares information based on your data and past market behaviour. It is not investment advice and does not recommend any product. You decide.</div></div></div>`);
+  if(m.type==='help')return modalShell(`<h2>Demo guide</h2><p class="lead">Pick a path. Each button loads the persona and opens the Modify SIP screen with their attempt filled in.</p>
+   ${[['arjun','Karthik, fear-stopper','Pause the flexi SIP for 3 months while the market falls. Drag the slider to 1 month to land on the little-change state.'],['meera','Meera, squeeze-stopper','Cancel the index SIP because she needs cash. Pick the cash reason to see smaller options first.'],['rohan','Rohan, no goal','Reduce a SIP to ₹1,000. The no-goal fallback asks what the SIP is for.']].map(([id,t,d])=>`<div class="row"><div><b>${t}</b><div class="d">${d}</div></div><button class="btn dark sm" data-a="dstart" data-p="${id}">Start</button></div>`).join('')}
+   <p class="hint" style="margin-top:14px;color:var(--ink2)">The Demo controls button (bottom right) switches persona, market mode and edge cases. Press D to hide or show it.</p>`);
+  if(m.type==='row'){const r=S.d.activities.find(x=>x.id===m.arg);if(!r)return '';return modalShell(`<h2>${esc(r.name)}</h2><p class="lead">${r.id}</p><div class="kv"><div class="stat"><div class="l">Amount</div><div class="v">${money(r.amount)}</div></div><div class="stat"><div class="l">Status</div><div class="v">${r.status}</div></div><div class="stat"><div class="l">Date</div><div class="v" style="font-size:16px">${stamp(r.date)}</div></div></div>${r.detail?`<div class="callout" style="margin-top:14px">${esc(r.detail)}</div>`:''}`)}
+  if(m.type==='checkin'){
+    const x=S.d.decisions.find(d=>d.id===m.arg);if(!x)return '';
+    return modalShell(`<h2>90 day check-in</h2><p class="lead">This is the card you would get on ${fmtDate(x.followup)}.</p><div class="callout">Three months ago you changed ${esc(x.short)}. Here is your goal now.</div>
+     ${x.keepPct!=null?`<div class="futures"><div class="fu"><div class="t">Then, if you had kept the SIP</div><div class="v">${x.keepPct}%</div><div class="r">of past windows reached the goal</div></div><div class="fu after"><div class="t">Now, with your change</div><div class="v">${x.actPct}%</div><div class="r">of past windows reach the goal</div></div></div>`:'<div class="callout">Your SIP is running on the new plan.</div>'}
+     <p class="hint" style="color:var(--ink2)">Based on past behaviour. It does not predict future returns.</p><div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px"><button class="btn soft" data-a="closemodal">Close</button><button class="btn dark" data-a="modal" data-p="modify:${x.sipId}">Modify this SIP again</button></div>`);
+  }
+  if(m.type==='addsip'){
+    const g=m.goalId||'';
+    return modalShell(`<h2>Add a SIP</h2><p class="lead">Start a new monthly investment. It shows up in My SIPs and Checkpoint covers it from day one.</p>
+    <label class="field"><span>Fund</span><select id="nfund">${Object.values(FUNDS).map(f=>`<option value="${f.key}">${f.label}</option>`).join('')}</select></label>
+    <div class="cols2" style="gap:12px"><label class="field"><span>Monthly amount (₹)</span><input id="namt" type="number" inputmode="numeric" min="100" value="5000"></label><label class="field"><span>First debit date</span><input id="ndate" type="date" min="2026-10-01" value="${addDaysISO('2026-09-29',7)}"></label></div>
+    <label class="field"><span>Goal</span><select id="ngoal"><option value="">No goal tagged</option>${S.d.goals.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>
+    <div id="nerr" class="callout warn" style="display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px"><button class="btn soft" data-a="closemodal">Cancel</button><button class="btn dark" data-a="addsipsave">Add SIP</button></div>`);
+  }
+  if(m.type==='why')return modalShell(`<h2>Why you see this</h2><p class="lead">You chose to change a SIP. Checkpoint shows what that change does to your goal before it goes through.</p>
+   <div class="row"><div><b>Data it uses</b><div class="d">Your SIPs, current value, goal targets and the past NAV history of your funds.</div></div></div>
+   <div class="row"><div><b>What it never does</b><div class="d">Recommend a fund, forecast the market, delay your decision or change a SIP without your confirmation.</div></div></div>
+   <div class="row"><div><b>Your controls</b><div class="d">Skip at any step, or turn Checkpoint off in settings.</div></div></div>
+   <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px"><button class="btn soft" data-a="togglecp">Turn off Checkpoint</button><button class="btn dark" data-a="closemodal">Close</button></div>`);
+  if(m.type==='search'){
+    return modalShell(`<h2>Search</h2><label class="search" style="margin:10px 0 12px;height:48px">${ic('search')}<input id="sq" data-in="sq" placeholder="Search SIPs, goals, pages or activity" autocomplete="off"></label><div id="sres">${searchHTML('')}</div>`);
+  }
+  return '';
+}
+function searchHTML(q){
+  q=q.trim().toLowerCase();const items=[];
+  const pages=[['overview','Overview'],['sips','My SIPs'],['goals','Goals'],['activity','Activity'],['insights','Insights'],['health','Portfolio health'],['sim','Simulate'],['how','How it works'],['settings','Checkpoint and transparency']];
+  pages.forEach(([k,l])=>items.push({t:'Page',l,a:'view',p:k,i:'grid'}));
+  S.d.sips.forEach(s=>{items.push({t:'SIP',l:FUNDS[s.fundKey].label,a:'sip',p:s.id,i:'cal'});if(s.status!=='cancelled')items.push({t:'Action',l:'Modify '+FUNDS[s.fundKey].label,a:'modify',p:s.id,i:'sliders'})});
+  S.d.goals.forEach(g=>items.push({t:'Goal',l:g.name,a:'modal',p:'goaledit:'+g.id,i:'target'}));
+  S.d.activities.slice(0,40).forEach(x=>items.push({t:'Activity',l:x.id+' '+x.name,a:'modal',p:'row:'+x.id,i:'list'}));
+  const r=(q?items.filter(x=>(x.t+' '+x.l).toLowerCase().includes(q)):items.filter(x=>x.t!=='Activity')).slice(0,9);
+  return r.length?r.map(x=>`<button class="it" style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 12px;border-radius:12px" data-a="${x.a}" data-p="${x.p}">${ic(x.i)}<span style="flex:1">${esc(x.l)}</span><span class="tag">${x.t}</span></button>`).join(''):`<div class="empty">Nothing matches "${esc(q)}".</div>`;
+}
+
+/* ===== CHECKPOINT LOGIC ===== */
+const REASONS=[['market','The market is falling','trenddown'],['cash','I need the cash right now','cash'],['doubt','I doubt this fund','help'],['goal','My goal changed','target'],['check','Just checking','eye']];
+const reasonLabel=k=>(REASONS.find(r=>r[0]===k)||[0,'Skipped'])[1];
+function attemptKey(a,sip){
+  if(a.type==='pause')return 'pause_'+a.k;if(a.type==='skip')return 'pause_1';
+  if(a.type==='reduce')return 'reduce_'+Math.round((1-a.newAmount/sip.amount)*100);
+  if(a.type==='cancel')return 'stop';return 'move_0';
+}
+function procLabel(a,sip){
+  if(a.type==='pause')return `the ${a.k} month pause`;if(a.type==='skip')return 'the skip';
+  if(a.type==='reduce')return 'the reduction to '+inr(a.newAmount);if(a.type==='cancel')return 'the cancellation';return 'the new debit date';
+}
+function short(a,sip){const f=FUNDS[sip.fundKey].label.replace('Sample ','');
+  return a.type==='pause'?`your ${f} SIP (paused ${a.k} months)`:a.type==='skip'?`your ${f} SIP (skipped one installment)`:a.type==='reduce'?`your ${f} SIP (reduced to ${inr(a.newAmount)})`:a.type==='cancel'?`your ${f} SIP (cancelled)`:`your ${f} SIP (debit date moved)`}
+function describeAction(a,sip,phase){
+  const will=phase==='review';
+  if(a.type==='pause'||a.type==='skip'){const k=a.type==='skip'?1:a.k,rs=fmtDate(addMonthsISO(sip.nextDebit,k));return will?`Your SIP will ${a.type==='skip'?'skip one installment':'pause for '+plural(k,'month')} and restart on ${rs}.`:`Your SIP ${a.type==='skip'?'skips one installment':'pauses for '+plural(k,'month')} and restarts on ${rs}.`}
+  if(a.type==='reduce')return `${will?'Your monthly amount will change':'Your monthly amount changes'} from ${inr(sip.amount)} to ${inr(a.newAmount)}. Next debit: ${fmtDate(sip.nextDebit)}.`;
+  if(a.type==='cancel')return will?'Your SIP will be cancelled. Existing units stay invested.':'Your SIP is cancelled. Existing units stay invested.';
+  return `${will?'Your debit date will move':'Your debit date moves'} to ${fmtDate(a.date)}. Nothing else changes.`;
+}
+function applyAction(sip,a){
+  const snap=JSON.stringify(sip);
+  if(a.type==='pause'||a.type==='skip'){const k=a.type==='skip'?1:a.k;sip.pauseLeft=(sip.pauseLeft||0)+k;sip.nextDebit=addMonthsISO(sip.nextDebit,k)}
+  else if(a.type==='reduce'){sip.amount=a.newAmount}
+  else if(a.type==='cancel'){sip.status='cancelled'}
+  else if(a.type==='move'){sip.nextDebit=a.date}
+  return snap;
+}
+function optDefs(sip){
+  const A=sip.amount,r=p=>Math.max(100,Math.round(A*(1-p/100)/100)*100);
+  const mk=(o)=>({...o});
+  return {
+   skip:mk({key:'skip',title:'Skip next installment',label:'a one month skip',action:{type:'skip',k:1},icon:'skip',note:'Resumes on '+fmtDate(addMonthsISO(sip.nextDebit,1))}),
+   pause2:mk({key:'pause2',title:'Pause for 2 months',label:'a 2 month pause',action:{type:'pause',k:2},icon:'pause',note:'Restarts on '+fmtDate(addMonthsISO(sip.nextDebit,2))}),
+   pause3:mk({key:'pause3',title:'Pause for 3 months',label:'a 3 month pause',action:{type:'pause',k:3},icon:'pause',note:'Restarts on '+fmtDate(addMonthsISO(sip.nextDebit,3)),caution:"Some fund houses treat a pause of three months or more as closing the SIP. Check your fund's rule."}),
+   reduce25:mk({key:'reduce25',title:'Reduce by 25%',label:'a 25% reduction',action:{type:'reduce',newAmount:r(25)},icon:'reduce',note:'New amount '+inr(r(25))+' a month'}),
+   reduce50:mk({key:'reduce50',title:'Reduce by 50%',label:'a 50% reduction',action:{type:'reduce',newAmount:r(50)},icon:'reduce',note:'New amount '+inr(r(50))+' a month'}),
+   move:mk({key:'move',title:'Move debit date',label:'a new debit date',action:{type:'move',date:addDaysISO(sip.nextDebit,10)},icon:'calmove',note:'Debit moves to '+fmtDate(addDaysISO(sip.nextDebit,10))})
+  };
+}
+function fctx(){
+  const f=S.flow,sip=getSip(f.sipId);
+  let goal=S.d.goals.find(g=>g.id===sip.goalId)||null;
+  if(goal&&f.goalDraft)goal={...goal,...f.goalDraft};
+  let H,target,linked;
+  if(goal){linked=S.d.sips.filter(s=>s.goalId===goal.id);if(!linked.some(s=>s.id===sip.id))linked.push(sip);H=monthsTo(goal.date);target=goal.target;if(S.flags.shortHorizon)H=9}
+  else{linked=[sip];H=f.horizonYears*12;target=null}
+  const rangeOnly=target==null||H<12;
+  return {f,sip,goal,linked,H,target:rangeOnly?null:target,rangeOnly,noGoal:!goal};
+}
+function calcR(c,key){if(S.flags.engineFail)throw new Error('engine');return twoFutures(c.linked,c.sip.id,key,c.H,c.target,S.flags)}
+function sliderKey(c){const f=c.f,a=f.attempt;if(a.type==='pause')return 'pause_'+(f.slider||a.k);if(a.type==='reduce')return 'reduce_'+(f.slider!=null?f.slider:Math.round((1-a.newAmount/c.sip.amount)*100));return attemptKey(a,c.sip)}
+function effectLine(keep,act,c,isMove){
+  if(isMove)return 'No change to your goal. Only the debit date moves.';
+  if(c.rangeOnly){const g=keep.p50-act.p50;return g<1000?'About the same typical result':'Typical result about '+lakhTxt(g)+' lower'}
+  if(keep.medianMonths!=null&&act.medianMonths!=null){const d=Math.round(act.medianMonths-keep.medianMonths);return d<=0?'Goal date barely moves':d===1?'Goal date moves about 1 month':`Goal date moves about ${d} months`}
+  const d=Math.round(keep.pctReach-act.pctReach);return d<=0?'Reach rate barely moves':`Reach rate falls by about ${d} points`;
+}
+function deltaTxt(keep,act){if(keep.medianMonths==null||act.medianMonths==null)return 'a few points of reach';const d=Math.round(act.medianMonths-keep.medianMonths);return d<1?'less than a month':d===1?'about 1 month':`about ${d} months`}
+function isLittle(c,keep,act){if(c.rangeOnly)return false;const rd=Math.abs(keep.pctReach-act.pctReach);const dm=(keep.medianMonths!=null&&act.medianMonths!=null)?Math.abs(act.medianMonths-keep.medianMonths):0;return dm<1&&rd<3}
+function optionList(c){
+  const f=c.f,sip=c.sip,defs=optDefs(sip),reason=f.reason,failed=S.flags.failedDebit&&sip.id===S.d.attempt.sipId;
+  let order=['skip','pause2','reduce25','reduce50','pause3'];
+  if(reason==='cash')order=['move','skip','reduce25','pause2','reduce50'];
+  if(failed)order=['move'].concat(order.filter(x=>x!=='move'));
+  else if(reason!=='cash')order=order.filter(x=>x!=='move');
+  const origKey=attemptKey(f.attempt,sip),keep=calcR(c,'keep'),orig=calcR(c,origKey),origCost=keep.p50-orig.p50,out=[];
+  for(const k of order){
+    const o=defs[k],ak=attemptKey(o.action,sip);
+    const same=(o.action.type===f.attempt.type&&(o.action.k||0)===(f.attempt.k||0)&&(o.action.newAmount||0)===(f.attempt.newAmount||0))||(o.action.type==='skip'&&f.attempt.type==='pause'&&f.attempt.k===1);
+    if(same)continue;
+    const r=calcR(c,ak),cost=keep.p50-r.p50;
+    if(o.action.type!=='move'&&cost>=origCost-1)continue;
+    out.push({...o,grid:ak,res:r,effect:effectLine(keep,r,c,o.action.type==='move')});
+  }
+  return out.slice(0,4);
+}
+
+/* ===== CHECKPOINT SCREENS ===== */
+function aboutTo(a,sip){
+  const amt=inr(sip.amount);
+  if(a.type==='pause')return `pause your ${amt} SIP for ${plural(a.k,'month')}`;
+  if(a.type==='skip')return `skip the next installment of your ${amt} SIP`;
+  if(a.type==='reduce')return `reduce your SIP from ${amt} to ${inr(a.newAmount)} a month`;
+  if(a.type==='cancel')return `cancel your ${amt} SIP`;return 'move your debit date';
+}
+function aLabel(c){const sk=sliderKey(c),ok=attemptKey(c.f.attempt,c.sip);if(sk===ok)return procLabel(c.f.attempt,c.sip);
+  if(sk.startsWith('pause_'))return `the ${sk.split('_')[1]} month pause`;if(sk.startsWith('reduce_'))return `a ${sk.split('_')[1]}% reduction`;return procLabel(c.f.attempt,c.sip)}
+function futureLine(r,c){
+  if(c.rangeOnly)return `Typical result about ${lakhTxt(r.p50)} after ${horizonTxt(c)}.`;
+  const d=r.medianMonths!=null?`Typical goal date ${dateOfM(r.medianMonths)}. `:'';
+  return `${d}${Math.round(r.pctReach)}% of past windows reach the goal.`;
+}
+function horizonTxt(c){return c.H<12?plural(c.H,'month'):(c.H%12===0?plural(c.H/12,'year'):plural(Math.round(c.H/12*10)/10,'year'))}
+function fallbackBody(c){
+  return `<h2>Numbers are not available right now</h2><p class="lead">We could not load the numbers for this change. Nothing has been changed. You can keep your SIP or go ahead with ${procLabel(c.f.attempt,c.sip)}.</p>
+  <div class="callout">Changing a SIP affects how much you invest over time. Your existing units stay invested either way.</div>
+  <div class="three two"><button class="btn line" data-a="fdecide" data-p="keep">Keep my SIP</button><button class="btn line" data-a="fdecide" data-p="proceed">Proceed with ${procLabel(c.f.attempt,c.sip)}</button></div>`;
+}
+function c2Dyn(c){
+  S.usedFallback=false;
+  const f=c.f,ok=attemptKey(f.attempt,c.sip),sk=sliderKey(c),keep=calcR(c,'keep'),act=sk===ok?calcR(c,ok):calcR(c,sk),label=aLabel(c);
+  const little=isLittle(c,keep,act);
+  let head,mean,reach='';
+  if(c.rangeOnly){head=narr('nogoal_head',{keep_range:lakhTxt(keep.p50),act_range:lakhTxt(act.p50),horizon_txt:horizonTxt(c),action_label:label});
+    const g=keep.p50-act.p50;mean=narr('nogoal_meaning',{gap_txt:g<1000?'very little':lakhTxt(g)})}
+  else{
+    const sl={goal_name:c.goal.name,keep_goal_date:keep.medianMonths!=null?dateOfM(keep.medianMonths):'',act_goal_date:act.medianMonths!=null?dateOfM(act.medianMonths):'',keep_pct:Math.round(keep.pctReach),act_pct:Math.round(act.pctReach),action_label:label,goal_date:goalLabel(c.goal.date),delta_txt:deltaTxt(keep,act)};
+    if(little){head=narr('little',{});mean=narr('little_meaning',{})}
+    else{head=narr((keep.medianMonths!=null&&act.medianMonths!=null)?'headline':'headline_pct',sl);mean=narr('meaning',sl)}
+    reach=narr('reach',sl);
+  }
+  S.chartCtx={keep,act,H:c.H};
+  const useBtn=(sk!==ok&&!(f.attempt.type==='reduce'&&f.slider===0))?`<button class="btn soft sm" data-a="fuse" style="margin:4px 0 10px">Choose ${label} instead</button>`:'';
+  return `<p class="headline">${esc(head)}</p>${reach?`<p class="reach">${esc(reach)}</p>`:''}<p class="reach" style="margin-top:-8px">${esc(mean)}</p>${useBtn}
+  ${chartTwo(keep,act,c.target,c.H,!c.rangeOnly)}
+  <div class="legend2"><span><i style="background:var(--ink)"></i>Keep this SIP</span><span><i style="background:var(--accent)"></i>After ${esc(label)}</span>${c.rangeOnly?'':'<span><i style="background:var(--good)"></i>Goal</span>'}<span style="color:var(--ink3)">Line is the middle case. Shading is the middle 80% of past outcomes.</span></div>
+  <div class="futures"><div class="fu"><div class="t">Keep this SIP</div><div class="v">${lakhTxt(keep.p50)}</div><div class="r">Range ${lakhTxt(keep.p10)} to ${lakhTxt(keep.p90)}${c.rangeOnly?'':'<br>'+Math.round(keep.pctReach)+'% of past windows reach the goal'}</div></div>
+   <div class="fu after"><div class="t">After ${esc(label)}</div><div class="v">${lakhTxt(act.p50)}</div><div class="r">Range ${lakhTxt(act.p10)} to ${lakhTxt(act.p90)}${c.rangeOnly?'':'<br>'+Math.round(act.pctReach)+'% of past windows reach the goal'}</div></div></div>
+  ${keep.proxyUsed?'<div class="callout warn"><b>Category proxy used.</b> This fund has a short history, so the index fund history stands in for it.</div>':''}
+  ${c.goal&&c.H<12?`<div class="callout">${esc(narr('short',{}))}</div>`:''}
+  ${S.usedFallback?'<div class="callout warn">Template text shown because the generated sentence failed the safety filter.</div>':''}
+  <p class="disc" style="color:var(--ink3);font-size:11.5px;margin:6px 0 0">Based on ${keep.nWindows} historical start dates of ${c.linked.length>1?'your funds':FUNDS[c.sip.fundKey].label}. Past behaviour does not predict future returns. <button class="linkbtn" style="padding:0;font-size:11.5px" data-a="fmath">Show the math</button></p>`;
+}
+function stepC2(c){
+  const f=c.f,a=f.attempt;
+  let top='';
+  if(c.noGoal){top=`<div class="callout"><b>What is this SIP for?</b><div class="chips" style="margin:10px 0">${['House','Retirement','Education','Wedding','General'].map(x=>`<button class="chip ${f.purpose===x?'on':''}" data-a="fpurpose" data-p="${x}">${x}</button>`).join('')}</div><div class="slidewrap" style="margin:0"><div class="top"><span>Time horizon</span><b id="hlbl">${plural(f.horizonYears,'year')}</b></div><input type="range" min="1" max="10" value="${f.horizonYears}" data-in="horizon" aria-label="Time horizon in years"></div></div>`}
+  let slider='';
+  if(a.type==='pause'){const v=f.slider||a.k;slider=`<div class="slidewrap"><div class="top"><span>Pause length</span><b id="slbl">${plural(v,'month')}</b></div><input type="range" min="1" max="6" step="1" value="${v}" data-in="slider" aria-label="Pause length in months"></div>`}
+  if(a.type==='reduce'){const v=f.slider!=null?f.slider:Math.round((1-a.newAmount/c.sip.amount)*100);slider=`<div class="slidewrap"><div class="top"><span>Reduction</span><b id="slbl">${v}% (${inr(c.sip.amount*(1-v/100))} a month)</b></div><input type="range" min="0" max="75" step="5" value="${Math.min(75,Math.round(v/5)*5)}" data-in="slider" aria-label="Reduction percentage"></div>`}
+  const g=c.goal;
+  return `<h2>Two Futures</h2><p class="lead">${g?`${esc(g.name)}. Target ${lakhTxt(c.f.goalDraft?.target||g.target)} by ${goalLabel(c.f.goalDraft?.date||g.date)}.`:'Your SIP with and without this change.'}</p>${top}<div id="c2dyn">${c2Dyn(c)}</div>${slider}`;
+}
+function modC3a(c){
+  const {eps,dd}=fundDD(c.sip.fundKey),rec=eps.map(e=>e.months).filter(x=>x!=null),falling=dd<=-10;
+  const rank=falling?ddRank(eps,dd):null,n=eps.length+(falling?1:0);
+  const intro=falling?narr('c3a_intro',{current_dd:Math.abs(dd).toFixed(0),dd_rank:ord[rank]||'',n_episodes:n}):narr('c3a_calm',{current_dd:Math.abs(dd).toFixed(1),n_episodes:eps.length});
+  const top=eps.slice().sort((a,b)=>a.size-b.size).slice(0,5),mx=Math.max(...top.map(e=>Math.abs(e.size)),Math.abs(dd));
+  return `<h3 style="margin:0 0 6px">How this fall compares</h3><p class="reach">${esc(intro)}</p>
+  <div class="epis">${top.map(e=>`<div class="e"><b>${e.size.toFixed(0)}%</b><span>${e.peak} to ${e.trough}</span><span>${e.months!=null?'Regained in '+plural(e.months,'month'):'Not regained yet'}</span></div>`).join('')}</div>
+  ${falling?`<div class="bars" style="margin:6px 0 10px">${top.map(e=>`<div class="hb" style="grid-template-columns:90px 1fr 50px"><span>${e.trough}</span><div class="b dk"><div style="width:${Math.abs(e.size)/mx*100}%"></div></div><span>${e.size.toFixed(0)}%</span></div>`).join('')}<div class="hb" style="grid-template-columns:90px 1fr 50px"><b>Today</b><div class="b"><div style="width:${Math.abs(dd)/mx*100}%"></div></div><b>${dd.toFixed(0)}%</b></div></div>`:''}
+  ${rec.length?`<p class="reach">${esc(narr('c3a_recovery',{min_recovery:Math.min(...rec),max_recovery:Math.max(...rec)}))}</p>`:''}`;
+}
+function modC3c(c){
+  const k=c.sip.fundKey;let body;
+  if(k==='index')body=`<p class="reach">${esc(narr('c3c_index',{}))}</p>`;
+  else{
+    const rr=rollingReturns(k),n=rr.f.length,beat=Math.round(rr.f.filter((v,i)=>v>rr.b[i]).length/n*100);
+    const q=a=>{const s=a.slice().sort((x,y)=>x-y);return [pct(s,10),pct(s,50),pct(s,90)]},fq=q(rr.f),bq=q(rr.b),lo=Math.min(fq[0],bq[0])-2,hi=Math.max(fq[2],bq[2])+2,X=v=>((v-lo)/(hi-lo)*100).toFixed(1);
+    const row=(l,r,col)=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><b>${l}</b><span style="color:var(--ink2)">${r[0].toFixed(0)}% to ${r[2].toFixed(0)}%, middle ${r[1].toFixed(0)}%</span></div><div class="range3"><div class="tr"></div><div class="rg" style="left:${X(r[0])}%;width:${X(r[2])-X(r[0])}%;background:${col}"></div><div class="md" style="left:${X(r[1])}%"></div></div></div>`;
+    body=`<p class="reach">${esc(narr('c3c_beat',{n_windows:n,fund_beat:beat,fund_trail:100-beat}))}</p>${row('This fund, rolling 3-year return',fq,'var(--accent)')}${row('Benchmark, rolling 3-year return',bq,'var(--ink3)')}`;
+  }
+  return `<h3 style="margin:0 0 6px">How this fund has done</h3>${body}<div class="callout">${esc(narr('c3c',{}))}</div>`;
+}
+function modC3d(c){
+  if(c.noGoal)return `<h3 style="margin:0 0 6px">Update your goal</h3><p class="reach">This SIP has no goal tagged yet. Add one and the two futures use it.</p><button class="btn dark sm" data-a="modal" data-p="goalnew">${ic('plus')} Add a goal</button>`;
+  const g={...c.goal},keep=calcR(c,'keep'),act=calcR(c,sliderKey(c));
+  return `<h3 style="margin:0 0 6px">Update your goal</h3><p class="reach">${esc(narr('c3d',{}))}</p>
+  <div class="cols2" style="gap:12px"><label class="field"><span>Target amount (₹)</span><input type="number" min="10000" value="${g.target}" data-in="gtarget"></label><label class="field"><span>Target month</span><input type="month" min="2026-10" value="${g.date}" data-in="gdate"></label></div>
+  <div class="futures"><div class="fu"><div class="t">Keep this SIP</div><div class="v">${c.rangeOnly?lakhTxt(keep.p50):Math.round(keep.pctReach)+'%'}</div><div class="r">${c.rangeOnly?'typical result':'of past windows reach it'}</div></div><div class="fu after"><div class="t">After your change</div><div class="v">${c.rangeOnly?lakhTxt(act.p50):Math.round(act.pctReach)+'%'}</div><div class="r">${c.rangeOnly?'typical result':'of past windows reach it'}</div></div></div>
+  ${f_goalDirty(c)?`<button class="btn soft sm" data-a="fgoalsave">Save goal changes</button>`:''}`;
+}
+function f_goalDirty(c){const d=c.f.goalDraft,g=S.d.goals.find(x=>x.id===c.sip.goalId);return d&&g&&(d.target!==g.target||d.date!==g.date)}
+function optionsBlock(c){
+  const list=optionList(c),sel=c.f.smaller&&c.f.smaller.key;
+  const intro=c.f.reason==='cash'?`<p class="reach">${esc(narr('c3b',{}))}</p>`:'';
+  const ovk=c.f.startedAt+'|'+(c.f.reason||'skipped');if(S._ovKey!==ovk){S._ovKey=ovk;track('option_viewed',{reason:c.f.reason||'skipped',options_shown:list.length})}
+  return `<h3 style="margin:${c.f.reason==='cash'?0:14}px 0 6px">Smaller options</h3>${intro}${list.length?`<div class="optcards">${list.map(o=>`<button class="oc ${sel===o.key?'on':''}" data-a="fpick" data-p="${o.key}"><span style="display:flex;align-items:center;gap:8px"><span class="oi" style="width:30px;height:30px;border-radius:10px;background:var(--tile);display:grid;place-items:center">${ic(o.icon)}</span><b>${o.title}</b></span><span class="e">${o.effect}<br>${o.note}</span>${o.caution?`<span class="e" style="color:var(--warn);font-size:12px">${esc(o.caution)}</span>`:''}<span class="tag ${sel===o.key?'o':''}" style="align-self:flex-start">${sel===o.key?'Selected':'Choose'}</span></button>`).join('')}</div>`:'<div class="callout">Nothing smaller than your request applies to this SIP.</div>'}`;
+}
+function stepC3(c){
+  const r=c.f.reason||'check';let mod='',title='Context and smaller options';
+  if(r==='market')mod=modC3a(c);else if(r==='doubt')mod=modC3c(c);else if(r==='goal')mod=modC3d(c);
+  const ttl={market:'Before you decide',cash:'Simple ways to ease the cash need',doubt:'Before you decide',goal:'Update your goal first',check:'Other ways to change your SIP'}[r];
+  const opts=optionsBlock(c);
+  return `<h2>${ttl}</h2><p class="lead" style="margin-bottom:12px">Facts from past behaviour. No forecasts.</p>${r==='cash'?opts+mod:mod+opts}`;
+}
+function stepC4(c){
+  const f=c.f,ok=attemptKey(f.attempt,c.sip),keep=calcR(c,'keep'),orig=calcR(c,ok),sm=f.smaller?calcR(c,f.smaller.grid):null,pl=procLabel(f.attempt,c.sip);
+  return `<h2>Your decision</h2><p class="lead">Three choices, equal weight. You stay in control.</p>
+  <div class="futures" style="grid-template-columns:1fr"><div class="fu"><div class="t">Keep my SIP</div><div class="r" style="color:var(--ink);font-size:14px;margin-top:2px">${esc(futureLine(keep,c))}</div></div>
+  ${sm?`<div class="fu"><div class="t">Take ${esc(f.smaller.label)}</div><div class="r" style="color:var(--ink);font-size:14px;margin-top:2px">${esc(futureLine(sm,c))}</div></div>`:''}
+  <div class="fu after"><div class="t">Proceed with ${esc(pl)}</div><div class="r" style="color:var(--ink);font-size:14px;margin-top:2px">${esc(futureLine(orig,c))}</div></div></div>
+  <label class="field" style="margin-top:14px"><span>Note to future you (optional)</span><input data-in="note" maxlength="140" value="${esc(f.note)}" placeholder="Why you are making this choice"></label>
+  <div class="three ${sm?'':'two'}"><button class="btn line" data-a="fdecide" data-p="keep">Keep my SIP</button>${sm?`<button class="btn line" data-a="fdecide" data-p="smaller">Take ${esc(f.smaller.label)}</button>`:''}<button class="btn line" data-a="fdecide" data-p="proceed">Proceed with ${esc(pl)}</button></div>`;
+}
+function stepC5(c){
+  const f=c.f,fin=f.choice==='smaller'&&f.smaller?f.smaller.action:f.attempt,sip=c.sip;
+  const ban=f.suppressed?`<div class="callout">${esc(f.suppressed)}</div>`:'';
+  if(f.phase!=='done'){
+    return `<h2>Confirm your change</h2><p class="lead">${esc(describeAction(fin,sip,'review'))}</p>${ban}<div class="callout">You can go back and choose differently. Nothing changes until you confirm.</div>`;
+  }
+  if(f.choice==='keep')return `<div style="text-align:center;padding:10px 0"><span class="avatar" style="width:64px;height:64px;margin:0 auto 14px;background:var(--good)">${ic('check')}</span><h2>Your SIP stays as it is</h2><p class="lead">No change made. Your next debit of ${inr(sip.amount)} is on ${fmtDate(sip.nextDebit)}.</p></div>${f.note?`<div class="callout">Saved your note for future you.</div>`:''}`;
+  const fu=(f.note||fin.type==='pause'||fin.type==='skip')?addDaysISO('2026-09-29',90):null;
+  return `<div style="text-align:center;padding:10px 0"><span class="avatar" style="width:64px;height:64px;margin:0 auto 14px;background:var(--good)">${ic('check')}</span><h2>Done</h2><p class="lead" style="max-width:460px;margin:0 auto 12px">${esc(describeAction(fin,f.snap?JSON.parse(f.snap):sip,'done'))}</p></div>
+  ${fu?`<div class="callout">We'll check in on ${fmtDate(fu)}.</div>`:''}
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px"><button class="btn soft" data-a="fundo">${ic('undo')} Undo until ${fmtDate(f.origNext)}</button></div>`;
+}
+function mathDrawer(c){
+  let k=null;try{k=calcR(c,'keep')}catch(e){}
+  const fl=c.linked.length>1?'your funds':FUNDS[c.sip.fundKey].label,tot=c.linked.reduce((a,s)=>a+s.value,0);
+  const lastStart=monthLabel(monthAt(Math.max(0,N_LEVELS-(c.H+EXTRA))));
+  return `<div class="drawer"><button class="x" data-a="fmathclose" aria-label="Close">${ic('x')}</button><div class="dbody"><h2>Show the math</h2><p class="lead" style="color:var(--ink2)">How the two futures were calculated.</p><ol>
+   <li><h4>Method</h4><p>We replayed ${k?k.nWindows:'many'} past start dates of ${esc(fl)}, from ${FIRST_NAV_LABEL} to ${lastStart}, adding your SIP each month. The chart shows the 10th, 50th and 90th percentile across those start dates.</p></li>
+   <li><h4>Inputs used</h4><ul><li>Current corpus on this goal: ${inr(tot)}</li><li>Monthly SIPs: ${c.linked.map(s=>inr(s.status==='cancelled'?0:s.amount)).join(' + ')}</li><li>Months left: ${c.H}</li><li>${c.rangeOnly?'No target used, corpus range only':'Goal target: '+inr(c.target)}</li></ul></li>
+   <li><h4>Assumptions</h4><ul><li>One contribution each month</li><li>No exit loads or taxes are modelled</li><li>Historical NAV of the fund, or a category proxy when history is short</li></ul></li>
+   <li><h4>Limits</h4><ul><li>Overlapping windows are not independent samples</li><li>Past behaviour does not predict future returns</li><li>Funds that survived look better than funds that closed</li><li>Short histories widen the range</li></ul></li>
+   <li><h4>Data source and as-of date</h4><p>Prototype NAV series anchored to calendar-year Nifty 50 returns, monthly, as of ${LAST_NAV_LABEL}. Fund names are masked.${k&&k.proxyUsed?' <b>Category proxy used</b> for a fund with fewer than '+MIN_WINDOWS+' start dates.':''}</p></li>
+   <li><h4>What this does not do</h4><ul><li>Recommend a fund or a trade</li><li>Forecast the market</li><li>Give investment advice</li></ul></li></ol></div></div>`;
+}
+function flowHTML(){
+  const f=S.flow;if(!f)return '';
+  const c=fctx(),sip=c.sip,pl=procLabel(f.attempt,sip),s=f.step;
+  let body='',left='',right='';
+  const proceed=`<button class="linkbtn" data-a="fproceed">Proceed with ${esc(pl)}</button>`;
+  const back=`<button class="btn soft sm" data-a="fback">${ic('back')} Back</button>`;
+  try{
+    if(s==='c0'){
+      body=`<h2>Before this goes through</h2><p class="lead">A quick look at what this change does to ${esc(c.goal?c.goal.name:'this SIP')}.</p>
+      <div class="callout" style="color:var(--ink)"><b>You're about to ${esc(aboutTo(f.attempt,sip))}.</b><div style="color:var(--ink2);margin-top:4px">${FUNDS[sip.fundKey].label}</div></div>
+      <p style="display:flex;align-items:center;gap:8px;color:var(--ink2)">${ic('clock')} About 20 seconds. <button class="linkbtn" style="padding:0" data-a="modal" data-p="why">Why am I seeing this?</button></p>`;
+      left=`<button class="btn soft" data-a="fskip">Skip and continue</button>`;right=`<button class="btn dark" data-a="ftake">Take a look</button>`;
+    }else if(s==='c1'){
+      const failed=S.flags.failedDebit&&sip.id===S.d.attempt.sipId;
+      body=`<h2>What's behind this change?</h2><p class="lead">This helps show the right context. You can skip it.</p>${failed?'<div class="callout warn">Your last debit for this SIP did not go through. Moving the debit date is one of the options ahead.</div>':''}
+      <div class="opts">${REASONS.map(([k,l,i])=>`<button class="opt ${f.reason===k?'on':''}" data-a="freason" data-p="${k}"><span class="oi">${ic(i)}</span><b>${l}</b></button>`).join('')}</div>
+      <p style="margin:12px 0 0"><button class="linkbtn" data-a="freason" data-p="skip">Skip this question</button></p>`;
+      left=back+proceed;
+    }else if(s==='c2'){
+      body=stepC2(c);left=back+proceed;right=`<button class="btn line" data-a="fmath">Show the math</button><button class="btn dark" data-a="fnext">Continue</button>`;
+    }else if(s==='c3'){body=stepC3(c);left=back+proceed;right=`<button class="btn dark" data-a="fnext">Continue</button>`}
+    else if(s==='c4'){body=stepC4(c);left=back}
+    else if(s==='c5'){body=stepC5(c);
+      if(f.phase!=='done')left=back,right=`<button class="btn dark" data-a="fconfirm">Confirm change</button>`;else right=`<button class="btn dark" data-a="fdone">Done</button>`}
+    if((s==='c2'||s==='c3'||s==='c4')&&S.flags.engineFail&&!f.errLogged){f.errLogged=true;track('error_fallback',{type:'engine'})}
+  }catch(e){
+    if(!f.errLogged){f.errLogged=true;track('error_fallback',{type:'engine'})}
+    body=fallbackBody(c);left=`<button class="btn soft sm" data-a="fclose">Close</button>`;right='';
+  }
+  const idx={c1:0,c2:1,c3:2,c4:3,c5:4}[s];
+  const dots=f.light?'':`<div class="steps" aria-label="Step ${idx||0} of 4">${[0,1,2,3].map(i=>`<i class="${idx!=null&&i<=idx-(s==='c5'?0:0)&&idx>0&&i<idx?'on':i===idx?'on':''}"></i>`).join('')}</div>`;
+  return `<div class="overlay" data-a="scrim2"><div class="cp" role="dialog" aria-modal="true" aria-label="FinLit Checkpoint" tabindex="-1">
+   <div class="cphd"><span class="brand"><span class="mark">${ic('shield')}</span>FinLit Checkpoint</span>${dots}</div>
+   <button class="x" data-a="fclose" aria-label="Close Checkpoint">${ic('x')}</button>
+   <div class="body">${body}</div>
+   <div class="foot"><div class="actions"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">${left}</div><div style="display:flex;gap:10px;flex-wrap:wrap">${right}</div></div>
+   <p class="disc">Checkpoint shares information based on your data and past market behaviour. It is not investment advice and does not recommend any product. You decide.</p></div>
+   ${f.math?mathDrawer(c):''}</div></div>`;
+}
+
+/* ===== DEMO PANEL ===== */
+const FLAG_LIST=[['killSwitch','Kill switch: hide Checkpoint'],['engineFail','Engine failure or timeout'],['badNarr','Inject a bad narration sentence'],['failedDebit','Failed debit on the changed SIP'],['shortHistory','Short fund history (category proxy)'],['shortHorizon','Goal under 12 months away'],['nearEnd','SIP within two installments of its end'],['tiny','SIP under ₹500 (light mode)'],['repeatRule','Repeat attempts within 7 days skip ahead']];
+function demoHTML(){
+  if(S.demoHidden)return `<div class="demo"><button class="fab" style="padding:8px;opacity:.28" data-a="dshow" aria-label="Show demo controls">${ic('sliders')}</button></div>`;
+  const per=Object.values(PERSONAS);
+  return `<div class="demo">${S.demoOpen?`<div class="panel" role="region" aria-label="Demo controls">
+   <h4>Persona</h4><div class="seg">${per.map(p=>`<button class="${S.persona===p.id?'on':''}" data-a="persona" data-p="${p.id}">${p.name}</button>`).join('')}</div>
+   <h4>Market mode</h4><div class="seg">${[['calm','Calm'],['fall12','Fall about 12%'],['fall25','Sharp fall 25%']].map(([k,l])=>`<button class="${S.mode===k?'on':''}" data-a="dmode" data-p="${k}">${l}</button>`).join('')}</div>
+   <button class="btn dark sm" style="width:100%;margin-top:14px" data-a="dstart" data-p="${S.persona}">Start ${PERSONAS[S.persona].name}'s attempt</button>
+   <h4>Edge cases and guardrails</h4>${FLAG_LIST.map(([k,l])=>`<div class="tg"><span>${l}</span>${sw(S.flags[k],'dflag',k)}</div>`).join('')}
+   <div style="display:flex;gap:8px;margin-top:14px"><button class="btn soft sm" style="flex:1" data-a="modal" data-p="resetask">Reset</button><button class="btn soft sm" style="flex:1" data-a="dhide">Hide panel</button></div>
+   <p class="hint" style="color:var(--ink3);margin:10px 0 0;font-size:12px">Press D to hide or show this panel. Market mode changes the badge and Fall and Recovery only. Two Futures always uses history.</p></div>`:''}
+   <button class="fab" data-a="dtoggle" aria-expanded="${S.demoOpen}">${ic('sliders')} Demo controls</button></div>`;
+}
+function renderLayer(){
+  const key=(S.flow?'f'+S.flow.step+(S.flow.math?'m':'')+(S.flow.phase||''):'')+(S.modal?'m'+S.modal.type+(S.modal.arg||''):'');
+  $('#layer').innerHTML=flowHTML()+modalHTML()+popHTML()+demoHTML();
+  if(key!==S._lk){S._lk=key;const d=$('#layer .modal, #layer .cp');if(d&&(S.modal||S.flow)){const top=S.modal?$('#layer .modal'):$('#layer .cp');top&&top.focus({preventScroll:true})}}
+  document.body.style.overflow=(S.flow||S.modal)?'hidden':'';
+}
+
+/* ===== RENDER WRAPPERS (keep scroll inside dialogs when the step stays the same) ===== */
+const _renderLayer=renderLayer;
+renderLayer=function(){
+  const prev=S._lk,cpB=$('#layer .cp .body'),mod=$('#layer .modal'),ov=$('#layer .drawer .dbody');
+  const st=[cpB?cpB.scrollTop:0,mod?mod.scrollTop:0,ov?ov.scrollTop:0];
+  RC++;_renderLayer();document.body.classList.toggle('lock',!!(S.flow||S.modal));
+  if(S._lk===prev){
+    const a=$('#layer .cp .body'),b=$('#layer .modal'),c=$('#layer .drawer .dbody');
+    if(a)a.scrollTop=st[0];if(b)b.scrollTop=st[1];if(c)c.scrollTop=st[2];
+  }
+};
+let RC=0;
+function rerender(){const y=window.scrollY;render();window.scrollTo(0,y)}
+function goTop(){render();window.scrollTo(0,0)}
+
+/* ===== SMALL HELPERS ===== */
+function defaultReduce(sip){return Math.max(500,Math.round(sip.amount*.5/100)*100)}
+function modalFor(sipId,att){
+  const sip=getSip(sipId);att=att||{};
+  return {type:'modify',sipId,m:{type:att.type||'pause',k:att.k||3,amt:att.newAmount||Math.min(defaultReduce(sip),sip.amount-1)}};
+}
+function attemptFromM(sip,x){
+  if(x.type==='pause')return {type:'pause',k:x.k};
+  if(x.type==='skip')return {type:'skip',k:1};
+  if(x.type==='reduce')return {type:'reduce',newAmount:x.amt};
+  return {type:'cancel'};
+}
+function nowStamp(){const d=new Date();return '2026-09-29 '+pad(d.getHours())+':'+pad(d.getMinutes())}
+function addActivity(row){S.d.activities.unshift(row);S.d.activities.sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id))}
+function actVerb(a){return {pause:'Paused',skip:'Skipped a debit of',reduce:'Reduced',cancel:'Cancelled',move:'Moved the debit date of'}[a.type]}
+function resetSession(){
+  loadPersona(S.persona);S.mode='calm';S.flags={...DEFAULT_FLAGS};S.events=[];S.userOff=false;S.flow=null;S.modal=null;S.pop=null;
+  S.sel={};S.actQuery='';S.actFilter='all';S.actTab='all';S.sipFilter='all';S.view='overview';S.arg=null;S.seq=500;S._ovKey=null;S._fbSeen={};_cache.clear();
+}
+function switchPersona(id){S.sim.sipId=null;S.sim.fall=0;
+  loadPersona(id);S.flow=null;S.modal=null;S.pop=null;S.sel={};S.actQuery='';S.actFilter='all';S.actTab='all';S.sipFilter='all';S.view='overview';S.arg=null;S._ovKey=null;S._fbSeen={};_cache.clear();
+  goTop();toast('Switched to '+PERSONAS[id].name);
+}
+
+/* ===== CHECKPOINT FLOW ===== */
+function newFlow(sipId,attempt){
+  return {sipId,attempt,step:'c0',reason:null,slider:null,smaller:null,note:'',phase:'review',choice:null,horizonYears:5,purpose:null,goalDraft:null,
+    math:false,suppressed:null,origNext:null,light:false,errLogged:false,startedAt:Date.now(),taps:0,prev:null,snap:null};
+}
+function startFlow(sipId,attempt){
+  const sip=getSip(sipId);
+  track('checkpoint_triggered',{sip_id:sipId,action:attempt.type,fund:sip.fundKey});
+  S._fbSeen={};S._ovKey=null;
+  if(S.flags.killSwitch||S.userOff){
+    track('checkpoint_suppressed',{rule:S.flags.killSwitch?'kill_switch':'user_off'});
+    S.modal={type:'plain',sipId,a:attempt};S.flow=null;renderLayer();return;
+  }
+  const f=newFlow(sipId,attempt);S.flow=f;
+  const days=sip.lastCheck?(Date.now()-sip.lastCheck)/864e5:null;
+  if(S.flags.nearEnd||sip.done>=sip.tenure-2){
+    f.step='c5';f.prev='c0';f.choice='proceed';f.suppressed='This SIP is close to its end date, so the change is small. Checkpoint skipped ahead to the confirm step.';
+    track('checkpoint_suppressed',{rule:'near_end'});
+  }else if(S.flags.repeatRule&&sip.lastCheck&&days<7){
+    f.step='c5';f.prev='c0';f.choice='proceed';f.suppressed='You looked at this SIP in the last 7 days, so Checkpoint skipped ahead. Your earlier decision is in the decision log.';
+    track('checkpoint_suppressed',{rule:'repeat_7d'});
+  }else if(S.flags.tiny||sip.amount<500){
+    f.light=true;f.step='c2';track('checkpoint_light',{});
+    try{const c=fctx();track('two_futures_viewed',{goal_id:c.goal?c.goal.id:'none',proxy_used:!!calcR(c,'keep').proxyUsed,light:true})}catch(e){}
+  }
+  S.modal=null;renderLayer();
+}
+function viewedTwo(f){
+  try{const c=fctx(),k=calcR(c,'keep'),a=calcR(c,sliderKey(c));
+    track('two_futures_viewed',{goal_id:c.goal?c.goal.id:'none',proxy_used:!!k.proxyUsed,little_change:isLittle(c,k,a)})}
+  catch(e){track('two_futures_viewed',{goal_id:'none',error:true})}
+}
+function pctOf(c,r){return (!c.rangeOnly&&r&&r.pctReach!=null)?Math.round(r.pctReach):null}
+function recordDecision(f,fin){
+  const c=fctx(),sip=c.sip;let keepPct=null,actPct=null;
+  try{if(!c.rangeOnly){keepPct=pctOf(c,calcR(c,'keep'));actPct=pctOf(c,calcR(c,f.choice==='keep'?attemptKey(f.attempt,sip):attemptKey(fin,sip)))}}catch(e){}
+  const label=FUNDS[sip.fundKey].label;
+  const fu=(f.choice!=='keep'&&(f.note||fin.type==='pause'||fin.type==='skip'))?addDaysISO('2026-09-29',90):null;
+  const d={id:'D'+(++S.seq),sipId:sip.id,title:f.choice==='keep'?'Kept '+label:actVerb(fin)+' '+label,short:short(fin,sip),when:fmtDate('2026-09-29'),
+    reasonLabel:reasonLabel(f.reason),choice:f.choice,keepPct,actPct,note:f.note.trim(),followup:fu};
+  S.d.decisions.push(d);
+  if(f.note.trim())track('note_added',{length:f.note.trim().length});
+  track('decision_made',{choice:f.choice,reason:f.reason||'skipped',action:fin.type,total_ms:Date.now()-f.startedAt,taps:f.taps});
+  sip.lastCheck=Date.now();
+  return d;
+}
+function flowAct(a,p){
+  const f=S.flow;if(!f)return;
+  const tapCount=['fmath','fmathclose','fuse','fpurpose','fpick','fgoalsave'];
+  if(!tapCount.includes(a))f.taps++;
+  const sip=getSip(f.sipId);
+  switch(a){
+    case 'ftake':f.step='c1';break;
+    case 'fskip':track('checkpoint_skipped',{step:'c0'});f.prev='c0';f.step='c5';f.phase='review';f.choice='proceed';break;
+    case 'freason':
+      f.reason=p==='skip'?null:p;track('reason_selected',{reason:p==='skip'?'skipped':p});
+      f.step='c2';f.slider=null;viewedTwo(f);break;
+    case 'fproceed':track('proceed_clicked',{step:f.step});f.prev=f.step;f.step='c5';f.phase='review';f.choice='proceed';break;
+    case 'fnext':
+      if(f.step==='c2')f.step=f.light?'c4':'c3';
+      else if(f.step==='c3')f.step='c4';
+      break;
+    case 'fback':
+      if(f.step==='c1')f.step='c0';
+      else if(f.step==='c2'){if(f.light){S.flow=null;S.modal=null;renderLayer();return}f.step='c1'}
+      else if(f.step==='c3')f.step='c2';
+      else if(f.step==='c4')f.step=f.light?'c2':'c3';
+      else if(f.step==='c5'){f.step=f.prev&&f.prev!=='c5'?f.prev:'c4';f.choice=null;f.suppressed=null}
+      break;
+    case 'fmath':f.math=true;track('math_opened',{step:f.step});break;
+    case 'fmathclose':f.math=false;break;
+    case 'fpick':{
+      let list=[];try{list=optionList(fctx())}catch(e){}
+      const o=list.find(x=>x.key===p);
+      if(f.smaller&&f.smaller.key===p)f.smaller=null;
+      else if(o){f.smaller={key:o.key,label:o.label,action:o.action,grid:o.grid};track('option_selected',{option:o.key})}
+      break}
+    case 'fuse':{
+      const c=fctx();
+      if(f.attempt.type==='pause'&&f.slider)f.attempt={type:'pause',k:f.slider};
+      else if(f.attempt.type==='reduce'&&f.slider!=null){
+        const amt=Math.min(sip.amount-1,Math.max(500,Math.round(sip.amount*(1-f.slider/100))));
+        f.attempt={type:'reduce',newAmount:amt};
+      }
+      track('slider_applied',{value:f.slider});f.slider=null;f.smaller=null;break}
+    case 'fpurpose':{
+      f.purpose=p;f.horizonYears={House:7,Retirement:10,Education:5,Wedding:3,General:5}[p]||5;
+      track('purpose_selected',{purpose:p});break}
+    case 'fdecide':{
+      f.choice=p;f.prev=f.step;
+      if(p==='keep'){
+        recordDecision(f,f.attempt);
+        addActivity({id:'CHK_'+S.seq,name:'Checkpoint: kept '+FUNDS[sip.fundKey].label,amount:sip.amount,status:'Completed',date:nowStamp(),sip:sip.id,ic:'shield',detail:'You chose to keep this SIP as it is.'+(f.note.trim()?' Note: '+f.note.trim():'')});
+        f.phase='done';f.step='c5';
+      }else{f.step='c5';f.phase='review'}
+      break}
+    case 'fconfirm':{
+      const fin=f.choice==='smaller'&&f.smaller?f.smaller.action:f.attempt;
+      f.origNext=sip.nextDebit;
+      const snap=JSON.stringify(sip);
+      const d=recordDecision(f,fin);f.decisionId=d.id;
+      applyAction(sip,fin);f.snap=snap;
+      f.actId='CHK_'+S.seq;
+      addActivity({id:f.actId,name:'Checkpoint: '+actVerb(fin).toLowerCase()+' '+FUNDS[sip.fundKey].label,amount:sip.amount,status:'Completed',date:nowStamp(),sip:sip.id,ic:'shield',detail:describeAction(fin,JSON.parse(snap),'done')+(f.note.trim()?' Note: '+f.note.trim():'')});
+      f.phase='done';f.step='c5';break}
+    case 'fundo':{
+      if(f.snap){
+        const i=S.d.sips.findIndex(s=>s.id===f.sipId);S.d.sips[i]=JSON.parse(f.snap);
+        const d=S.d.decisions.find(x=>x.id===f.decisionId);if(d){d.followup=null;d.undone=true}
+        addActivity({id:'CHK_'+(++S.seq),name:'Checkpoint: change undone, '+FUNDS[sip.fundKey].label,amount:S.d.sips[i].amount,status:'Completed',date:nowStamp(),sip:f.sipId,ic:'undo',detail:'You undid the change. The SIP is back to how it was.'});
+        track('undo_clicked',{sip_id:f.sipId});
+      }
+      S.flow=null;renderLayer();rerender();toast('Change undone');return}
+    case 'fdone':S.flow=null;S.modal=null;rerender();return;
+    case 'fclose':
+      track('checkpoint_closed',{step:f.step,phase:f.phase});
+      S.flow=null;S.modal=null;rerender();return;
+    case 'fgoalsave':{
+      const g=S.d.goals.find(x=>x.id===sip.goalId);
+      if(g&&f.goalDraft){g.target=f.goalDraft.target;g.date=f.goalDraft.date;f.goalDraft=null;track('goal_updated',{goal_id:g.id});toast('Goal saved')}
+      break}
+  }
+  renderLayer();
+  if(a==='fdecide'&&f.choice==='keep'||a==='fconfirm')rerender();
+}
+
+/* ===== ACTIONS ===== */
+function closeTop(){
+  if(S.pop){S.pop=null;renderLayer();return true}
+  if(S.modal){S.modal=null;renderLayer();return true}
+  if(S.flow){
+    if(S.flow.math){S.flow.math=false;renderLayer();return true}
+    if(S.flow.step==='c5'&&S.flow.phase==='done'){S.flow=null;rerender();return true}
+    track('checkpoint_closed',{step:S.flow.step,phase:S.flow.phase});S.flow=null;rerender();return true;
+  }
+  return false;
+}
+function openModal(p,el){
+  S.pop=null;
+  const [k,arg]=[p.split(':')[0],p.includes(':')?p.slice(p.indexOf(':')+1):null];
+  switch(k){
+    case 'about':case 'help':case 'why':S.modal={type:k};break;
+    case 'resetask':S.modal={type:'confirm',title:'Reset the demo?',body:'This restores the persona, SIPs, goals, activity and event log to the start.',ok:'reset',okLabel:'Reset'};break;
+    case 'goalnew':S.modal={type:'goal',goal:null,link:S.flow?[S.flow.sipId]:[]};break;
+    case 'goaledit':{const g=S.d.goals.find(x=>x.id===arg);if(!g)return;S.modal={type:'goal',goal:{...g},link:S.d.sips.filter(s=>s.goalId===g.id).map(s=>s.id)};break}
+    case 'goaldel':{const g=S.d.goals.find(x=>x.id===arg);if(!g)return;S.modal={type:'confirm',title:'Delete "'+g.name+'"?',body:'SIPs linked to this goal will show no goal. This does not change any SIP.',ok:'goaldelok',okp:g.id,okLabel:'Delete goal'};break}
+    case 'break':S.modal={type:'break',arg};break;
+    case 'row':S.modal={type:'row',arg};break;
+    case 'checkin':S.modal={type:'checkin',arg};break;
+    case 'modify':if(!getSip(arg))return;S.modal=modalFor(arg);break;
+    case 'search':S.modal={type:'search'};break;
+    case 'addsip':S.modal={type:'addsip'};break;
+    default:return;
+  }
+  renderLayer();
+  if(k==='search'){const q=$('#sq');q&&q.focus()}
+}
+
+const ACTIONS={
+  view(p){S.view=p;S.arg=null;S.pop=null;if(!S.flow)S.modal=null;goTop()},
+  sip(p){S.view='sip';S.arg=p;S.pop=null;if(!S.flow)S.modal=null;goTop()},
+  modify(p){S.pop=null;const s=getSip(p);if(!s||s.status==='cancelled')return;S.modal=modalFor(p);renderLayer()},
+  restart(p){
+    const s=getSip(p);if(!s)return;s.status='active';s.pauseLeft=0;s.nextDebit=addDaysISO('2026-09-29',7);
+    addActivity({id:'RST_'+(++S.seq),name:'SIP restarted, '+FUNDS[s.fundKey].label,amount:s.amount,status:'Pending',date:nowStamp(),sip:s.id,ic:'refresh'});
+    track('sip_restarted',{sip_id:p});toast('SIP restarted. Next debit '+fmtDate(s.nextDebit));rerender()},
+  sipf(p){S.sipFilter=p;rerender()},
+  navr(p){S.navRange=p;rerender()},
+  theme(p){S.theme=p;render()},
+  toggletheme(){S.theme=S.theme==='dark'?'light':'dark';rerender()},
+  togglelakh(){S.lakh=!S.lakh;rerender();renderLayer()},
+  togglecp(){
+    if(S.flags.killSwitch){toast('The platform switched Checkpoint off in the demo controls');return}
+    S.userOff=!S.userOff;track('checkpoint_toggle',{on:!S.userOff});
+    toast(S.userOff?'Checkpoint is off. You will see a plain confirm screen.':'Checkpoint is on');
+    S.pop=null;if(S.modal&&S.modal.type==='why')S.modal=null;rerender()},
+  logview(){S.view='activity';S.actTab='cp';goTop()},
+  search(){openModal('search')},
+  pop(p,el){
+    if(S.pop&&S.pop.type===p){S.pop=null;renderLayer();return}
+    S.pop={type:p,rect:el.getBoundingClientRect()};renderLayer()},
+  notif(p){
+    S.pop=null;const i=p.indexOf(':'),k=p.slice(0,i),v=p.slice(i+1);
+    if(k==='sip')return ACTIONS.sip(v);
+    if(k==='checkin')return openModal('checkin:'+v);
+    if(k==='view')return ACTIONS.view(v)},
+  persona(p){switchPersona(p)},
+  modal(p,el){openModal(p,el)},
+  closemodal(){S.modal=null;renderLayer()},
+  scrim(p,el,e){if(e.target===el){S.modal=null;renderLayer()}},
+  scrim2(p,el,e){if(e.target===el&&!S.modal){track('checkpoint_closed',{step:S.flow&&S.flow.step,how:'backdrop'});S.flow=null;rerender()}},
+  mset(p){const m=S.modal.m,sip=getSip(S.modal.sipId);m.type=p;if(p==='reduce'&&!(m.amt>=500&&m.amt<sip.amount))m.amt=Math.min(defaultReduce(sip),sip.amount-1);renderLayer()},
+  mk(p){S.modal.m.k=+p;renderLayer()},
+  mred(p){const m=S.modal.m,sip=getSip(S.modal.sipId);m.amt=Math.max(500,Math.round(sip.amount*(1-p/100)/100)*100);renderLayer()},
+  mcont(){
+    const mo=S.modal;if(!mo||mo.type!=='modify')return;
+    const sip=getSip(mo.sipId),x=mo.m;
+    if(x.type==='reduce'&&!(x.amt>=500&&x.amt<sip.amount))return;
+    startFlow(mo.sipId,attemptFromM(sip,x))},
+  plainok(){
+    const mo=S.modal,sip=getSip(mo.sipId),snap=applyAction(sip,mo.a);
+    addActivity({id:'MOD_'+(++S.seq),name:actVerb(mo.a)+' '+FUNDS[sip.fundKey].label,amount:sip.amount,status:'Completed',date:nowStamp(),sip:sip.id,ic:'cal',detail:describeAction(mo.a,JSON.parse(snap),'done')});
+    track('plain_confirm',{action:mo.a.type});S.modal=null;rerender();toast('Change confirmed')},
+  addsipsave(){
+    const mo=S.modal;if(!mo||mo.type!=='addsip')return;
+    const fundKey=$('#nfund').value,amount=Math.round(+$('#namt').value),date=$('#ndate').value,goalId=$('#ngoal').value||null,err=$('#nerr');
+    let msg='';
+    if(!(amount>=100))msg='Enter a monthly amount of at least ₹100.';
+    else if(amount>1000000)msg='Enter an amount up to ₹10,00,000.';
+    else if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||date<'2026-10-01')msg='Pick a first debit date after today.';
+    if(msg){err.textContent=msg;err.style.display='block';return}
+    const s={id:'n'+(++S.seq),fundKey,amount,value:0,invested:0,nextDebit:date,done:0,tenure:120,goalId,xirr:0,pauseLeft:0,status:'active',lastCheck:0};
+    S.d.sips.push(s);
+    addActivity({id:'SCH_'+(++S.seq),name:'New SIP scheduled, '+FUNDS[fundKey].label,amount,status:'Pending',date:date+' 09:00',sip:s.id,ic:'plus'});
+    track('sip_added',{fund:fundKey,goal:goalId||'none'});_cache.clear();
+    S.modal=null;S.view='sips';S.arg=null;toast('SIP added. First debit '+fmtDate(date));goTop()},
+  goalsave(){
+    const mo=S.modal;if(!mo||mo.type!=='goal')return;
+    const name=$('#gname').value.trim(),target=Math.round(+$('#gtarget').value),date=$('#gdate').value,err=$('#gerr');
+    const links=[...document.querySelectorAll('.gsip:checked')].map(x=>x.value);
+    let msg='';
+    if(!name)msg='Give the goal a name.';
+    else if(!(target>=10000))msg='Enter a target of at least ₹10,000.';
+    else if(!/^\d{4}-\d{2}$/.test(date)||date<'2026-10')msg='Pick a target month after this month.';
+    if(msg){err.textContent=msg;err.style.display='block';return}
+    let g;
+    if(mo.goal&&mo.goal.id){g=S.d.goals.find(x=>x.id===mo.goal.id);g.name=name;g.target=target;g.date=date}
+    else{g={id:'g'+(++S.seq),name,target,date};S.d.goals.push(g)}
+    S.d.sips.forEach(s=>{if(links.includes(s.id))s.goalId=g.id;else if(s.goalId===g.id)s.goalId=null});
+    track('goal_saved',{goal_id:g.id,linked:links.length});
+    S.modal=null;toast(mo.goal&&mo.goal.id?'Goal saved':'Goal added');rerender();renderLayer()},
+  goaldelok(p){
+    S.d.goals=S.d.goals.filter(g=>g.id!==p);S.d.sips.forEach(s=>{if(s.goalId===p)s.goalId=null});
+    track('goal_deleted',{goal_id:p});S.modal=null;toast('Goal deleted');rerender();renderLayer()},
+  reset(){resetSession();goTop();toast('Demo reset')},
+  rowsel(p){S.sel[p]=!S.sel[p];rerender()},
+  selall(){const r=filteredActs(),all=r.length&&r.every(x=>S.sel[x.id]);r.forEach(x=>S.sel[x.id]=!all);rerender()},
+  clearsel(){S.sel={};rerender()},
+  actfilter(p){S.actFilter=p;S.pop=null;rerender();renderLayer()},
+  acttab(p){S.actTab=p;rerender()},
+  copyref(p){S.pop=null;renderLayer();copyText(p)},
+  copytext(p){copyText(p)},
+  copycsv(){const b=$('#csvbox');copyText(b?b.value:'')},
+  dtoggle(){S.demoOpen=!S.demoOpen;renderLayer()},
+  dhide(){S.demoHidden=true;renderLayer()},
+  dshow(){S.demoHidden=false;renderLayer()},
+  dcycle(){const o=['calm','fall12','fall25'];S.mode=o[(o.indexOf(S.mode)+1)%3];track('market_mode',{mode:S.mode});toast('Market mode: '+(S.mode==='calm'?'calm':S.mode==='fall12'?'fall of about 12%':'sharp fall of about 25%'));rerender();renderLayer()},
+  simtab(p){S.sim.tab=p;S.view='sim';S.arg=null;S.pop=null;if(!S.flow)S.modal=null;goTop()},
+  simtype(p){S.sim.type=p;rerender()},
+  repfund(p){S.sim.fund=p;S.sim.fall=0;rerender()},
+  repfall(p){S.sim.fall=+p;rerender()},
+  ask(p){S.ask=+p;rerender()},
+  mktjump(p){S.mktFund=p||S.mktFund;S.view='insights';S.arg=null;S.pop=null;if(!S.flow)S.modal=null;goTop();setTimeout(()=>{const e=document.getElementById('mkt');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},60)},
+  mktf(p){S.mktFund=p;rerender()},
+  scrollmkt(){ACTIONS.mktjump(S.mktFund||'index')},
+  raiseask(p){
+    const [id,na]=p.split(':'),sip=getSip(id);if(!sip)return;
+    S.modal={type:'confirm',title:'Raise this SIP?',body:'Your '+FUNDS[sip.fundKey].label+' SIP goes from '+inr(sip.amount)+' to '+inr(+na)+' a month, starting with the next debit on '+fmtDate(sip.nextDebit)+'. You can change it again at any time.',ok:'raiseok',okp:p,okLabel:'Raise SIP'};renderLayer()},
+  raiseok(p){
+    const [id,na]=p.split(':'),sip=getSip(id);if(!sip)return;const old=sip.amount;sip.amount=+na;
+    addActivity({id:'MOD_'+(++S.seq),name:'Raised SIP amount, '+FUNDS[sip.fundKey].label,amount:sip.amount,status:'Completed',date:nowStamp(),sip:sip.id,ic:'trend',detail:'Monthly amount changed from '+inr(old)+' to '+inr(sip.amount)+'.'});
+    track('sip_raised',{sip_id:id,from:old,to:sip.amount});_cache.clear();S.modal=null;toast('SIP raised to '+inr(sip.amount));rerender();renderLayer()},
+  dmode(p){S.mode=p;track('market_mode',{mode:p});rerender();renderLayer()},
+  dflag(p){S.flags[p]=!S.flags[p];track('demo_flag',{flag:p,on:S.flags[p]});_cache.clear();rerender();renderLayer()},
+  dstart(p){
+    const orig=PERSONAS[p],att=orig.attempt,os=orig.sips.find(s=>s.id===att.sipId);
+    if(S.persona!==p||!S.d)loadPersona(p);
+    else{const cur=getSip(att.sipId);if(!cur||cur.status==='cancelled'||cur.amount!==os.amount||cur.nextDebit!==os.nextDebit||cur.pauseLeft)loadPersona(p)}
+    S.flow=null;S.pop=null;S.demoOpen=false;S.view='sips';S.arg=null;S.sel={};
+    S.modal=modalFor(att.sipId,att);_cache.clear();S._ovKey=null;S._fbSeen={};
+    goTop();toast(orig.name+': modify screen ready')}
+};
+['fskip','ftake','freason','fback','fproceed','fnext','fclose','fmath','fmathclose','fpick','fuse','fpurpose','fdecide','fconfirm','fundo','fdone','fgoalsave']
+  .forEach(k=>ACTIONS[k]=p=>flowAct(k,p));
+
+/* ===== EVENTS ===== */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');
+  let popClosed=false;
+  if(S.pop&&!e.target.closest('.pop')&&!(el&&el.dataset.a==='pop')){S.pop=null;popClosed=true}
+  if(!el||el.disabled){if(popClosed)renderLayer();return}
+  const fn=ACTIONS[el.dataset.a],before=RC;
+  if(fn)fn(el.dataset.p,el,e);
+  if(popClosed&&RC===before)renderLayer();
+});
+function refreshC2(){
+  const box=$('#c2dyn');if(!box||!S.flow)return;
+  try{box.innerHTML=c2Dyn(fctx())}catch(err){renderLayer()}
+}
+document.addEventListener('input',e=>{
+  const el=e.target,k=el.dataset&&el.dataset.in;if(!k)return;
+  const f=S.flow;
+  switch(k){
+    case 'actq':{S.actQuery=el.value;const b=$('#actbody');if(b)b.innerHTML=actRows(S.view==='overview'?6:null);break}
+    case 'sq':{const r=$('#sres');if(r)r.innerHTML=searchHTML(el.value);break}
+    case 'mamt':{
+      const mo=S.modal;if(!mo||mo.type!=='modify')break;mo.m.amt=Math.round(+el.value||0);
+      const sip=getSip(mo.sipId),ok=mo.m.amt>=500&&mo.m.amt<sip.amount,btn=document.querySelector('#layer [data-a="mcont"]');
+      if(btn)btn.disabled=!ok;
+      let w=document.querySelector('#layer .modal .callout.warn');
+      if(!ok&&!w){const wrap=el.closest('.field');if(wrap){wrap.insertAdjacentHTML('afterend','<div class="callout warn">Enter an amount from ₹500 to '+inr(sip.amount-1)+'.</div>')}}
+      if(ok&&w)w.remove();
+      break}
+    case 'note':if(f)f.note=el.value;break;
+    case 'horizon':if(f){f.horizonYears=+el.value;const l=$('#hlbl');if(l)l.textContent=plural(f.horizonYears,'year');refreshC2()}break;
+    case 'slider':if(f){
+      f.slider=+el.value;const c=fctx(),l=$('#slbl');
+      if(l)l.textContent=f.attempt.type==='pause'?plural(f.slider,'month'):f.slider+'% ('+inr(c.sip.amount*(1-f.slider/100))+' a month)';
+      refreshC2()}break;
+    case 'gtarget':if(f){const g=S.d.goals.find(x=>x.id===getSip(f.sipId).goalId);if(g){const v=Math.round(+el.value);if(v>=10000)f.goalDraft={target:v,date:(f.goalDraft&&f.goalDraft.date)||g.date}}}break;
+    case 'gdate':if(f){const g=S.d.goals.find(x=>x.id===getSip(f.sipId).goalId);if(g&&/^\d{4}-\d{2}$/.test(el.value)&&el.value>='2026-10')f.goalDraft={target:(f.goalDraft&&f.goalDraft.target)||g.target,date:el.value}}break;
+  }
+});
+document.addEventListener('change',e=>{
+  const el=e.target,k=el.dataset&&el.dataset.in;if(!k)return;
+  const f=S.flow;
+  switch(k){
+    case 'fmt':S.lakh=el.value==='lakh';rerender();renderLayer();break;
+    case 'sipgoal':{const s=getSip(el.dataset.p);if(s){s.goalId=el.value||null;track('goal_tagged',{sip_id:s.id,goal_id:el.value||'none'});toast(el.value?'Goal tag saved':'Goal tag removed');rerender()}break}
+    case 'mamt':renderLayer();break;
+    case 'slider':if(f)track('slider_changed',{value:f.slider,action:f.attempt.type});break;
+    case 'horizon':if(f)track('horizon_changed',{years:f.horizonYears});break;
+    case 'gtarget':case 'gdate':
+      if(f){
+        if(k==='gtarget'&&!(Math.round(+el.value)>=10000))toast('Enter a target of at least ₹10,000');
+        else if(k==='gdate'&&!(/^\d{4}-\d{2}$/.test(el.value)&&el.value>='2026-10'))toast('Pick a month after this month');
+        else renderLayer();
+      }
+      break;
+  }
+});
+
+document.addEventListener('input',e=>{
+  const el=e.target,k=el.dataset&&el.dataset.in;if(!k||!k.startsWith('sim')&&k!=='repamt')return;
+  const s=S.sim;
+  if(k==='simslider'){if(s.type==='pause')s.k=+el.value;else s.pct=+el.value;const c=simCtx();if(!c)return;const l=$('#simlbl');if(l)l.textContent=s.type==='pause'?plural(s.k,'month'):s.pct+'% ('+inr(c.sip.amount*(1-s.pct/100))+' a month)';$('#simdyn').innerHTML=simDyn(c)}
+  else if(k==='simyears'){s.years=+el.value;const c=simCtx();if(!c)return;const l=$('#simylbl');if(l)l.textContent=plural(s.years,'year');$('#simdyn').innerHTML=simDyn(c)}
+  else if(k==='repamt'){const v=Math.round(+el.value);if(v>=500&&v<=500000){s.amt=v;$('#repdyn').innerHTML=repDyn()}}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;if(el.dataset&&el.dataset.in==='simsip'){S.sim.sipId=el.value;rerender()}
+});
+/* chart hover */
+function hideTips(){document.querySelectorAll('.tfchart').forEach(t=>{const c=t.querySelector('.cross'),p=t.querySelector('.tip');if(c)c.style.display='none';if(p)p.style.display='none'});S._tipOn=false}
+function chartHover(hit,e){
+  const wrap=hit.closest('.tfchart'),svg=hit.ownerSVGElement,cx=S.chartCtx;if(!wrap||!svg||!cx)return;
+  const r=svg.getBoundingClientRect(),sc=r.width/720,pl=+hit.dataset.pl,w=+hit.dataset.w,H=+wrap.dataset.h;
+  const x=(e.clientX-r.left)/sc,t=Math.max(0,Math.min(H-1,Math.round((x-pl)/w*(H-1)))),X=pl+w*t/Math.max(1,H-1);
+  const cr=wrap.querySelector('.cross'),tip=wrap.querySelector('.tip');
+  cr.setAttribute('x1',X);cr.setAttribute('x2',X);cr.style.display='';
+  tip.innerHTML='<b>'+dateOfM(t+1)+'</b><br>Keep: '+lakhTxt(cx.keep.s50[t])+'<br>After change: '+lakhTxt(cx.act.s50[t]);
+  tip.style.display='block';
+  const px=X*sc,tw=tip.offsetWidth;tip.style.left=Math.max(4,Math.min(r.width-tw-4,px+12))+'px';
+  S._tipOn=true;
+}
+['pointermove','pointerdown'].forEach(ev=>document.addEventListener(ev,e=>{
+  const hit=e.target.closest&&e.target.closest('.tfchart .hit');
+  if(hit)chartHover(hit,e);else if(S._tipOn)hideTips();
+}));
+
+document.addEventListener('keydown',e=>{
+  const t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT');
+  if(e.key==='Escape'){if(closeTop())e.preventDefault();return}
+  if((e.key==='d'||e.key==='D')&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey){S.demoHidden=!S.demoHidden;renderLayer()}
+  if(e.key==='Enter'&&typing&&t.dataset.in==='note'){e.preventDefault()}
+});
+window.addEventListener('resize',()=>{if(S.pop){S.pop=null;renderLayer()}});
+
+
+/* ===== TAB TRANSITIONS: content flows in from the side of the selected tab ===== */
+const VIEW_ORDER=['overview','sips','sip','goals','activity','insights','health','sim','how','settings'];
+S._lastView=S.view;
+function tabSnap(view){
+  const m={};
+  document.querySelectorAll('.navpill,.tabs,.seg2').forEach(g=>{
+    const bs=[...g.querySelectorAll(':scope>button')],i=bs.findIndex(b=>b.classList.contains('on'));if(i<0)return;
+    const act=bs[0].dataset.a||'x',key=g.classList.contains('navpill')?'nav':view+'|'+act;
+    m[key]={i,x:bs[i].getBoundingClientRect().left,act,el:bs[i],g};
+  });
+  return m;
+}
+function flow(el,dir){el.classList.remove('flowL','flowR');void el.offsetWidth;el.classList.add(dir>0?'flowR':'flowL')}
+function subTargets(act,g){
+  const q=x=>[...document.querySelectorAll(x)];
+  if(act==='sipf'||act==='acttab'||act==='simtab')return q('#main > :not(.pagehd)');
+  if(act==='mktf')return q('#mkt > :not(.hd)');
+  if(act==='navr')return [...((g.closest('section')||document).querySelectorAll('svg:not(.i)'))];
+  if(act==='simtype')return q('#simslot,#simdyn');
+  if(act==='repfund')return q('#repdyn');
+  return [];
+}
+const _renderBase=render;
+render=function(){
+  const before=tabSnap(S._lastView);
+  _renderBase();
+  const after=tabSnap(S.view),main=document.getElementById('main');
+  if(S._lastView!==S.view&&main){
+    const a=VIEW_ORDER.indexOf(S._lastView),b=VIEW_ORDER.indexOf(S.view);
+    if(a>=0&&b>=0&&a!==b)flow(main,b>a?1:-1);
+  }
+  Object.keys(after).forEach(k=>{
+    const A=after[k],B=before[k];if(!B)return;
+    const dx=B.x-A.x;
+    if(Math.abs(dx)>2){
+      const el=A.el;el.style.position='relative';el.style.zIndex='1';el.style.transition='none';el.style.transform='translateX('+dx+'px)';void el.offsetWidth;
+      el.style.transition='transform .4s cubic-bezier(.22,.9,.3,1)';el.style.transform='';
+    }
+    if(k!=='nav'&&B.i!==A.i)subTargets(A.act,A.g).forEach(t=>flow(t,A.i>B.i?1:-1));
+  });
+  S._lastView=S.view;
+};
+
+/* ===== BOOT ===== */
+loadPersona('arjun');
+render();
+
+</script>
+</body>
+</html>
+
+</body></html>
